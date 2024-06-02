@@ -19,16 +19,16 @@ class SectionBloc extends Bloc<SectionEvent, SectionState> {
     });
   }
 
-  Stream<SectionState> mapEventToState(SectionEvent event) async* {
-    debugger();
-    if (event is FetchAllSectionsEvent) {
-      yield SectionLoadingState();
-      try {
-        final sections = await sectionRepository.call();
-        yield ConcreteSectionsSuccessState(sections);
-      } on Exception catch (error) {
-        yield SectionErrorState(error.toString());
-      }
-    }
-  }
+  // Stream<SectionState> mapEventToState(SectionEvent event) async* {
+  //   debugger();
+  //   if (event is FetchAllSectionsEvent) {
+  //     yield SectionLoadingState();
+  //     try {
+  //       final sections = await sectionRepository.call();
+  //       yield ConcreteSectionsSuccessState(sections);
+  //     } on Exception catch (error) {
+  //       yield SectionErrorState(error.toString());
+  //     }
+  //   }
+  // }
 }
