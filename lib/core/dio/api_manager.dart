@@ -1,17 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:kanban/core/values/enums.dart';
 import 'package:kanban/core/values/exception/app_exceptions.dart';
 import 'package:kanban/core/values/exception/request_type_exception.dart';
 
 class ApiManager {
-  late final Dio _client;
+  final Dio _client = Dio();
   dynamic responseJson;
-  static String token = '';
+  static String token = '5d3799598e78c10a7efb2155157001d414cbfa38';
   final timeoutDuration = const Duration(seconds: 60);
   ApiManager() {
-    _client = Dio();
     _client.interceptors.add(
       LogInterceptor(
         responseBody: true,
@@ -185,7 +185,7 @@ class ApiManager {
       default:
         throw FetchDataException(
             'Error occurred while communicating with server '
-            'with status code {response.statusCode.toString()}');
+            'with status code ${response.statusCode.toString()}');
     }
   }
 }

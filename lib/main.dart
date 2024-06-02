@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:kanban/core/styles/themes.dart';
+import 'package:kanban/core/dio/dio_dependency_injection.dart';
+import 'package:kanban/core/repository/get_sections.dart';
 import 'package:kanban/core/values/routes_config.dart';
+import 'package:kanban/presentation/bloc/section_bloc.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-  runApp(
-    const ProviderScope(
-      child: MyApp(),
-    ),
-  );
+  setupApiManager();
+  runApp(const MyApp());
 }
-
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -27,22 +25,29 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return MaterialApp.router(
-          routerConfig: routerConfig,
-          builder: (context, child) {
-            return Overlay(
-              initialEntries: [
-                if (child != null) ...[
-                  OverlayEntry(
-                    builder: (context) => child,
-                  )
-                ]
-              ],
-            );
-          },
-          debugShowCheckedModeBanner: false,
-          title: 'Kanban',
-          theme: theme,
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider<SectionBloc>(
+              create: (context) => SectionBloc(GetAllSectionsRepository()),
+            ),
+          ],
+          child: MaterialApp.router(
+            routerConfig: routerConfig,
+            builder: (context, child) {
+              return Overlay(
+                initialEntries: [
+                  if (child != null) ...[
+                    OverlayEntry(
+                      builder: (context) => child,
+                    )
+                  ]
+                ],
+              );
+            },
+            debugShowCheckedModeBanner: false,
+            title: 'Kanban',
+            theme: theme,
+          ),
         );
       },
     );

@@ -22,6 +22,9 @@ dependencies:
   fluttertoast: ^8.2.5
   go_router: ^14.1.4
   kanban_board: ^0.1.0
+  dartz: ^0.10.1
+  flutter_bloc: ^8.1.5
+  get_it: ^7.7.0
 
 dev_dependencies:
   flutter_test:

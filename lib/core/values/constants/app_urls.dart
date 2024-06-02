@@ -1,4 +1,7 @@
 class AppUrls {
-  static const String registerApiUrl = "http://192.168.10.70:8081/api/v1/auth/register";
-  static const String loginUrl = "http://192.168.10.70:8081/api/v1/auth/login";
+  static const String baseUrl = "https://api.todoist.com/rest/v2";
+  static const String getAllSectionUrl =
+      "$baseUrl/sections?project_id=2334093161";
+  
+  
 }
