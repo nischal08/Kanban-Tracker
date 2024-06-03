@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:kanban/core/values/enums.dart';
 import 'package:kanban/core/values/exception/app_exceptions.dart';

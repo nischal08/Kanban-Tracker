@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kanban/core/values/constants/app_routes.dart';
 import 'package:kanban/presentation/screens/error_screen.dart';
-import 'package:kanban/presentation/screens/home_screen.dart';
+import 'package:kanban/presentation/screens/home/home_screen.dart';
 import 'package:kanban/presentation/screens/splash_screen.dart';
 
 GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();

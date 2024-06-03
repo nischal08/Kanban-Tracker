@@ -1,7 +1,7 @@
 import 'package:kanban/core/dio/dio_dependency_injection.dart';
 import 'package:kanban/core/values/constants/app_urls.dart';
 import 'package:kanban/core/values/enums.dart';
-import 'package:kanban/presentation/model/section_model.dart';
+import 'package:kanban/presentation/models/section_model.dart';
 
 abstract class SectionRepository {
   Future<List<Section>> call();

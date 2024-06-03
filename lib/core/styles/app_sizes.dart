@@ -5,8 +5,8 @@ gapH(double height) {
   return SizedBox(height: height.h);
 }
 
-gapW(double height) {
-  return SizedBox(height: height.w);
+gapW(double width) {
+  return SizedBox(width: width.w);
 }
 
 class AppSizes {

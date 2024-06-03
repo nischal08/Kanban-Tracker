@@ -37,5 +37,5 @@ class ErrorState<T> extends AppState {
     required this.message,
   });
 
-  List<Object?> get props => [message];
+  List<Object?> get props => [data, message];
 }

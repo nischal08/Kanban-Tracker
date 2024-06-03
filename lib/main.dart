@@ -4,9 +4,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:kanban/core/styles/themes.dart';
 import 'package:kanban/core/dio/dio_dependency_injection.dart';
-import 'package:kanban/core/repository/get_sections.dart';
+import 'package:kanban/presentation/repositories/get_sections.dart';
 import 'package:kanban/core/values/routes_config.dart';
-import 'package:kanban/presentation/bloc/section_bloc.dart';
+import 'package:kanban/presentation/bloc/section/section_bloc.dart';
+import 'package:kanban/presentation/repositories/get_tasks.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
         return MultiBlocProvider(
           providers: [
             BlocProvider<SectionBloc>(
-              create: (context) => SectionBloc(GetAllSectionsRepository()),
+              create: (context) => SectionBloc(GetAllSectionsRepository(),GetAllTasksRepository()),
             ),
           ],
           child: MaterialApp.router(
