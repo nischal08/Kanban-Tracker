@@ -71,7 +71,7 @@ class _AllBoardState extends State<AllBoard> {
                 await showDialog(
                     context: context,
                     builder: (BuildContext dgContext) {
-                      return AddCardDialog();
+                      return const AddCardDialog();
                     });
 
                 // context.read<SectionBloc>().controller.addGroupItem(
