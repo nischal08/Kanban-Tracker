@@ -3,11 +3,12 @@ import 'dart:developer';
 import 'package:appflowy_board/appflowy_board.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kanban/presentation/models/section_model.dart';
 import 'package:kanban/presentation/models/task_model.dart';
 import 'package:kanban/presentation/repositories/get_sections.dart';
-import 'package:kanban/presentation/models/section_model.dart';
 import 'package:kanban/presentation/repositories/get_tasks.dart';
 import 'package:kanban/presentation/screens/home/entity/text_item.dart';
+
 part 'section_state.dart';
 
 class SectionBloc extends Bloc<SectionEvent, SectionState> {
@@ -47,11 +48,12 @@ class SectionBloc extends Bloc<SectionEvent, SectionState> {
                 name: section.name,
                 items: tasksMap[section.id]!.map(
                   (e) {
+                    String title = "${e.content}!@#${e.id}!@#${e.commentCount}";
                     if (e.description.isEmpty) {
-                      return TextItem(e.content);
+                      return TextItem(title);
                     } else {
                       return RichTextItem(
-                          title: e.content, subtitle: e.description);
+                          title: title, subtitle: e.description);
                     }
                   },
                 ).toList(),

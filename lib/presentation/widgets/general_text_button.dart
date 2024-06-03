@@ -13,6 +13,7 @@ class GeneralTextButton extends StatelessWidget {
   final double? borderSize;
   final double? imageH;
   final bool isSmallText;
+  final bool isMinimumWidth;
   final IconData? prefixIcon;
   final bool loading;
   final VoidCallback? onPressed;
@@ -28,6 +29,7 @@ class GeneralTextButton extends StatelessWidget {
     this.isSmallText = false,
     required this.title,
     this.isDisabled = false,
+    this.isMinimumWidth = false,
     this.borderSize,
     this.borderColor,
     this.loading = false,
@@ -49,7 +51,8 @@ class GeneralTextButton extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: marginH ?? AppSizes.padding),
       height: height ?? 38.h,
-      width: width ?? MediaQuery.of(context).size.width,
+      width:
+          width ?? (isMinimumWidth ? null : MediaQuery.of(context).size.width),
       child: OutlinedButton(
         style: ButtonStyle(
           splashFactory: NoSplash.splashFactory,

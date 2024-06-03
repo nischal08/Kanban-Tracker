@@ -7,9 +7,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kanban/core/styles/app_sizes.dart';
 import 'package:kanban/core/styles/text_styles.dart';
 import 'package:kanban/presentation/bloc/section/section_bloc.dart';
-import 'package:kanban/presentation/models/task_model.dart';
 import 'package:kanban/presentation/screens/home/entity/text_item.dart';
-import 'package:kanban/presentation/screens/home/widgets/confirmation_dialog.dart';
+import 'package:kanban/presentation/screens/home/widgets/add_card_dialog.dart';
+import 'package:kanban/presentation/screens/home/widgets/edit_card_dialog.dart';
 
 class AllBoard extends StatefulWidget {
   const AllBoard({super.key});
@@ -65,16 +65,23 @@ class _AllBoardState extends State<AllBoard> {
               title: const Text('New'),
               height: 40.h,
               margin: config.groupBodyPadding,
-              onAddButtonClick: () {
+              onAddButtonClick: () async {
                 //TODO: add new card
-                context.read<SectionBloc>().controller.addGroupItem(
-                      columnData.headerData.groupId,
-                      RichTextItem(title: "Hello1", subtitle: "how are you"),
-                    );
-                context
-                    .read<SectionBloc>()
-                    .boardController
-                    .scrollToBottom(columnData.id);
+
+                await showDialog(
+                    context: context,
+                    builder: (BuildContext dgContext) {
+                      return AddCardDialog();
+                    });
+
+                // context.read<SectionBloc>().controller.addGroupItem(
+                //       columnData.headerData.groupId,
+                //       RichTextItem(title: "Hello1", subtitle: "how are you"),
+                //     );
+                // context
+                //     .read<SectionBloc>()
+                //     .boardController
+                //     .scrollToBottom(columnData.id);
               },
             );
           },
@@ -118,17 +125,31 @@ class _AllBoardState extends State<AllBoard> {
   }
 
   Widget _buildCard(AppFlowyGroupData group, AppFlowyGroupItem item) {
-    SectionBloc sectionBloc = BlocProvider.of<SectionBloc>(context);
-    TaskModel taskData = (sectionBloc.state as SectionSuccessState)
-        .tasks[group.headerData.groupId]!
-        .firstWhere((element) => element.content == item.id);
+    // SectionBloc sectionBloc = BlocProvider.of<SectionBloc>(context);
+    // TaskModel taskData = (sectionBloc.state as SectionSuccessState)
+    //     .tasks[group.headerData.groupId]!
+    //     .firstWhere((element) => element.content == item.id);
+    String commentCount = '';
+    String title = '';
+    String description = item is RichTextItem ? item.subtitle : '';
+    String taskId = '';
+    List dataList = item is RichTextItem
+        ? item.title.split('!@#')
+        : item is TextItem
+            ? item.s.split('!@#')
+            : [];
+    if (dataList.isNotEmpty) {
+      title = dataList[0];
+      taskId = dataList[1];
+      commentCount = dataList[2];
+    }
     return GestureDetector(
       onTap: () async {
         //TODO: remaining to code for edit data
         await showDialog(
             context: context,
             builder: (BuildContext dgContext) {
-              return const BoardCardEditDialog();
+              return const EditCardDialog();
             });
       },
       child: Padding(
@@ -158,7 +179,10 @@ class _AllBoardState extends State<AllBoard> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      RichTextCard(item: item),
+                      RichTextCard(
+                        title: title,
+                        description: description,
+                      ),
                       gapH(6),
                       Container(
                         height: 0.5,
@@ -170,7 +194,7 @@ class _AllBoardState extends State<AllBoard> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "ID ${taskData.id}",
+                            "ID $taskId",
                           ),
                           Row(
                             children: [
@@ -181,7 +205,7 @@ class _AllBoardState extends State<AllBoard> {
                               ),
                               gapW(2),
                               Text(
-                                taskData.commentCount.toString(),
+                                commentCount,
                               ),
                               gapW(4),
                             ],
@@ -200,34 +224,29 @@ class _AllBoardState extends State<AllBoard> {
   }
 }
 
-class RichTextCard extends StatefulWidget {
-  final AppFlowyGroupItem item;
+class RichTextCard extends StatelessWidget {
+  final String title;
+  final String description;
   const RichTextCard({
-    required this.item,
     super.key,
+    required this.title,
+    required this.description,
   });
 
-  @override
-  State<RichTextCard> createState() => _RichTextCardState();
-}
-
-class _RichTextCardState extends State<RichTextCard> {
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          (widget.item is TextItem)
-              ? (widget.item as TextItem).s
-              : (widget.item as RichTextItem).title,
+          title,
           style: generalTextStyle(14),
         ),
-        if (widget.item is RichTextItem)
+        if (description.isNotEmpty)
           Padding(
             padding: EdgeInsets.only(top: 8.h),
             child: Text(
-              (widget.item as RichTextItem).subtitle,
+              description,
               overflow: TextOverflow.ellipsis,
               style: generalTextStyle(12).copyWith(
                 color: Colors.grey,

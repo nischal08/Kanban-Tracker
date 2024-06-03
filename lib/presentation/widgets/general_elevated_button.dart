@@ -15,6 +15,7 @@ class GeneralElevatedButton extends StatelessWidget {
   final double? borderRadius;
   final bool isDisabled;
   final double? height;
+  final bool isMinimumWidth;
   final double? width;
   final BorderRadius? customBorderRadius;
   final double? marginH;
@@ -26,6 +27,7 @@ class GeneralElevatedButton extends StatelessWidget {
     this.isSmallText = false,
     required this.title,
     this.bgColor,
+    this.isMinimumWidth = false,
     this.fgColor,
     this.borderRadius,
     this.isDisabled = false,
@@ -59,7 +61,8 @@ class GeneralElevatedButton extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: marginH ?? AppSizes.padding),
       height: height ?? 40.h,
-      width: width ?? MediaQuery.of(context).size.width,
+      width:
+          width ?? (isMinimumWidth ? null : MediaQuery.of(context).size.width),
       child: ElevatedButton(
         key: key,
         style: ButtonStyle(

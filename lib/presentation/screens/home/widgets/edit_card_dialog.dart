@@ -5,8 +5,8 @@ import 'package:kanban/core/styles/text_styles.dart';
 import 'package:kanban/presentation/widgets/general_elevated_button.dart';
 import 'package:kanban/presentation/widgets/general_text_button.dart';
 
-class BoardCardEditDialog extends StatelessWidget {
-  const BoardCardEditDialog({
+class EditCardDialog extends StatelessWidget {
+  const EditCardDialog({
     super.key,
   });
 

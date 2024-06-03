@@ -25,6 +25,7 @@ class HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        foregroundColor: Colors.white,
         title: const Text("Kanban dashboard"),
       ),
       body: Padding(

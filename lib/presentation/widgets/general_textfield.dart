@@ -57,7 +57,7 @@ class GeneralTextField extends StatefulWidget {
     this.suffixText,
     this.obscureText = false,
     this.onClickPsToggle,
-    required this.keywordType,
+    this.keywordType = TextInputType.text,
     required this.validate,
     this.onFieldSubmit,
     required this.textInputAction,
