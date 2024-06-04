@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kanban/core/styles/styles.dart';
 import 'package:kanban/presentation/models/task_model.dart';
-import 'package:kanban/presentation/screens/home/widgets/custom_text.dart';
 import 'package:kanban/presentation/widgets/general_text_button.dart';
 
 class TaskDetailDialog extends StatelessWidget {
@@ -54,11 +53,66 @@ class TaskDetailDialog extends StatelessWidget {
             ),
           ],
         ),
-        const CustomText(
-          text: "Task Detail",
-          isTitle: true,
+        Text(
+          task.content,
+          style: generalTextStyle(18).copyWith(
+            fontWeight: FontWeight.w600,
+          ),
         ),
         gapH(24),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Task ID",
+                  style: generalTextStyle(14).copyWith(
+                    color: Colors.grey.shade600,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                gapH(4),
+                Text(
+                  task.id,
+                  style: generalTextStyle(14).copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Due Date",
+                  style: generalTextStyle(14).copyWith(
+                    color: Colors.grey.shade600,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                gapH(4),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.schedule,
+                      color: Colors.grey.shade600 ,
+                    ),
+                    gapW(4),
+                    Text(
+                      task.due!.date,
+                      style: generalTextStyle(14).copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            gapW(0)
+          ],
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [

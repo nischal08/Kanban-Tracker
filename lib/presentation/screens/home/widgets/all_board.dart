@@ -95,6 +95,7 @@ class _AllBoardState extends State<AllBoard> {
           headerBuilder: (context, columnData) {
             return Column(
               children: [
+              gapH(4),
                 AppFlowyGroupHeader(
                   icon: const Icon(Icons.lightbulb_circle),
                   title: Expanded(
@@ -105,6 +106,7 @@ class _AllBoardState extends State<AllBoard> {
                   ),
                   margin: config.groupBodyPadding,
                 ),
+              gapH(4),
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 12.w),
                   height: 0.5,
@@ -164,7 +166,10 @@ class _AllBoardState extends State<AllBoard> {
         await showDialog(
             context: context,
             builder: (BuildContext dgContext) {
-              return TaskDetailDialog(task: taskData, taskStatus: "");
+              return TaskDetailDialog(
+                task: taskData,
+                taskStatus: group.headerData.groupName,
+              );
             });
       },
       child: Padding(
