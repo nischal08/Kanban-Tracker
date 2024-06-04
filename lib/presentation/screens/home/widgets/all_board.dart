@@ -7,9 +7,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kanban/core/styles/app_sizes.dart';
 import 'package:kanban/core/styles/text_styles.dart';
 import 'package:kanban/presentation/bloc/section/section_task_bloc.dart';
+import 'package:kanban/presentation/models/task_model.dart';
 import 'package:kanban/presentation/screens/home/entity/text_item.dart';
-import 'package:kanban/presentation/screens/home/widgets/add_card_dialog.dart';
-import 'package:kanban/presentation/screens/home/widgets/edit_card_dialog.dart';
+import 'package:kanban/presentation/screens/home/widgets/add_card_bottomsheet_content.dart';
+import 'package:kanban/presentation/screens/home/widgets/task_detail_dialog.dart';
 
 class AllBoard extends StatefulWidget {
   const AllBoard({super.key});
@@ -37,7 +38,8 @@ class _AllBoardState extends State<AllBoard> {
       child: AppFlowyBoard(
           controller: context.watch<SectionTaskBloc>().controller,
           cardBuilder: (context, group, groupItem) {
-            log(group.id);
+            log(group.headerData.groupName);
+            log(group.headerData.groupId);
             return AppFlowyGroupCard(
               margin: EdgeInsets.only(
                 top: 12.h,
@@ -72,7 +74,7 @@ class _AllBoardState extends State<AllBoard> {
                     useSafeArea: true,
                     isScrollControlled: true,
                     builder: (BuildContext dgContext) {
-                      return AddCardDialog(
+                      return AddCardBottomsheetContent(
                         groupId: columnData.headerData.groupId,
                         onCreate: () {
                           context
@@ -95,18 +97,11 @@ class _AllBoardState extends State<AllBoard> {
               children: [
                 AppFlowyGroupHeader(
                   icon: const Icon(Icons.lightbulb_circle),
-                  onMoreButtonClick: () {
-                    //TODO: add menu logic include edit
-                  },
                   title: Expanded(
                     child: Text(
                       columnData.headerData.groupName,
                       style: generalTextStyle(16),
                     ),
-                  ),
-                  moreIcon: Icon(
-                    Icons.edit_note_sharp,
-                    size: 18.h,
                   ),
                   margin: config.groupBodyPadding,
                 ),
@@ -125,10 +120,12 @@ class _AllBoardState extends State<AllBoard> {
   }
 
   Widget _buildCard(AppFlowyGroupData group, AppFlowyGroupItem item) {
-    // SectionBloc sectionBloc = BlocProvider.of<SectionBloc>(context);
-    // TaskModel taskData = (sectionBloc.state as SectionSuccessState)
-    //     .tasks[group.headerData.groupId]!
-    //     .firstWhere((element) => element.content == item.id);
+    SectionTaskBloc sectionBloc = BlocProvider.of<SectionTaskBloc>(context);
+    TaskModel taskData = (sectionBloc.state as SectionSuccessState)
+        .tasks[group.headerData.groupId]!
+        .firstWhere((element) {
+      return item.id.contains(element.id);
+    });
     String commentCount = '';
     String title = '';
     String description = item is RichTextItem ? item.subtitle : '';
@@ -164,11 +161,10 @@ class _AllBoardState extends State<AllBoard> {
 
     return GestureDetector(
       onTap: () async {
-        //TODO: remaining to code for edit data
         await showDialog(
             context: context,
             builder: (BuildContext dgContext) {
-              return const EditCardDialog();
+              return TaskDetailDialog(task: taskData, taskStatus: "");
             });
       },
       child: Padding(

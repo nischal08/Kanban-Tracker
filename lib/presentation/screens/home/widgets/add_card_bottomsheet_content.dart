@@ -4,28 +4,29 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:kanban/core/styles/app_sizes.dart';
-import 'package:kanban/core/styles/text_styles.dart';
 import 'package:kanban/presentation/bloc/task/add_task_bloc.dart';
 import 'package:kanban/presentation/protocols/is_empty_validation.dart';
+import 'package:kanban/presentation/screens/home/widgets/custom_text.dart';
 import 'package:kanban/presentation/widgets/general_dropdown.dart';
 import 'package:kanban/presentation/widgets/general_elevated_button.dart';
 import 'package:kanban/presentation/widgets/general_text_button.dart';
 import 'package:kanban/presentation/widgets/general_textfield.dart';
 
-class AddCardDialog extends StatefulWidget {
+class AddCardBottomsheetContent extends StatefulWidget {
   final VoidCallback onCreate;
   final String groupId;
-  const AddCardDialog({
+  const AddCardBottomsheetContent({
     super.key,
     required this.onCreate,
     required this.groupId,
   });
 
   @override
-  State<AddCardDialog> createState() => _AddCardDialogState();
+  State<AddCardBottomsheetContent> createState() =>
+      _AddCardBottomsheetContentState();
 }
 
-class _AddCardDialogState extends State<AddCardDialog> {
+class _AddCardBottomsheetContentState extends State<AddCardBottomsheetContent> {
   DateTime lastDate = DateTime.now().add(const Duration(days: 365 * 18));
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
@@ -89,23 +90,12 @@ class _AddCardDialogState extends State<AddCardDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              "Create a task",
-              textAlign: TextAlign.center,
-              style: generalTextStyle(22).copyWith(
-                color: Colors.black,
-                fontWeight: FontWeight.w500,
-              ),
+            const CustomText(
+              text: "Create a task",
+              isTitle: true,
             ),
             gapH(20),
-            Text(
-              "Title",
-              textAlign: TextAlign.center,
-              style: generalTextStyle(12).copyWith(
-                color: Colors.black,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            const CustomText(text: "Title"),
             gapH(4),
             GeneralTextField(
               controller: addTaskBloc.titleTEC,
@@ -115,14 +105,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
               hintText: "Write something",
             ),
             gapH(16),
-            Text(
-              "Priority",
-              textAlign: TextAlign.center,
-              style: generalTextStyle(12).copyWith(
-                color: Colors.black,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            const CustomText(text: "Priority"),
             gapH(4),
             GeneralDropdownTextField(
               onChanged: (value) {
@@ -145,14 +128,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "Due Date",
-                        textAlign: TextAlign.center,
-                        style: generalTextStyle(12).copyWith(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                      const CustomText(text: "Due Date"),
                       gapH(4),
                       GeneralTextField(
                         readonly: true,
@@ -171,14 +147,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "Due Time",
-                        textAlign: TextAlign.center,
-                        style: generalTextStyle(12).copyWith(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                      const CustomText(text: "Due Time"),
                       gapH(4),
                       GeneralTextField(
                         readonly: true,
@@ -195,14 +164,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
               ],
             ),
             gapH(16),
-            Text(
-              "Description",
-              textAlign: TextAlign.center,
-              style: generalTextStyle(12).copyWith(
-                color: Colors.black,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            const CustomText(text: "Description"),
             gapH(4),
             GeneralTextField(
               hintText: "Write something",
