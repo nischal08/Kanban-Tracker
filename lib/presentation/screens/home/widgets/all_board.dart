@@ -70,7 +70,8 @@ class _AllBoardState extends State<AllBoard> {
 
                 await showModalBottomSheet(
                     context: context,
-                    useSafeArea: false,isScrollControlled: true,
+                    useSafeArea: true,
+                    isScrollControlled: true,
                     builder: (BuildContext dgContext) {
                       return AddCardDialog(
                         groupId: columnData.headerData.groupId,

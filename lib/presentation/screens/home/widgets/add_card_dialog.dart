@@ -81,173 +81,175 @@ class _AddCardDialogState extends State<AddCardDialog> {
     }
   }
 
-  Form bodyContent(BuildContext context) {
-    return Form(
-      key: context.watch<TaskBloc>().formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            "Create a task",
-            textAlign: TextAlign.center,
-            style: generalTextStyle(22).copyWith(
-              color: Colors.black,
-              fontWeight: FontWeight.w500,
+  SingleChildScrollView bodyContent(BuildContext context) {
+    return SingleChildScrollView(
+      child: Form(
+        key: context.watch<TaskBloc>().formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "Create a task",
+              textAlign: TextAlign.center,
+              style: generalTextStyle(22).copyWith(
+                color: Colors.black,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
-          gapH(20),
-          Text(
-            "Title",
-            textAlign: TextAlign.center,
-            style: generalTextStyle(12).copyWith(
-              color: Colors.black,
-              fontWeight: FontWeight.w600,
+            gapH(20),
+            Text(
+              "Title",
+              textAlign: TextAlign.center,
+              style: generalTextStyle(12).copyWith(
+                color: Colors.black,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          gapH(4),
-          GeneralTextField(
-            controller: addTaskBloc.titleTEC,
-            validate: (value) =>
-                IsEmptyValidation().validate(value, title: "title"),
-            textInputAction: TextInputAction.next,
-            hintText: "Write something",
-          ),
-          gapH(16),
-          Text(
-            "Priority",
-            textAlign: TextAlign.center,
-            style: generalTextStyle(12).copyWith(
-              color: Colors.black,
-              fontWeight: FontWeight.w600,
+            gapH(4),
+            GeneralTextField(
+              controller: addTaskBloc.titleTEC,
+              validate: (value) =>
+                  IsEmptyValidation().validate(value, title: "title"),
+              textInputAction: TextInputAction.next,
+              hintText: "Write something",
             ),
-          ),
-          gapH(4),
-          GeneralDropdownTextField(
-            onChanged: (value) {
-              addTaskBloc.priorityTEC.text = value;
-            },
-            validate: (value) =>
-                IsEmptyValidation().validate(value, title: "priority"),
-            items: const [
-              "Normal",
-              "Medium",
-              "High",
-              "Urgent",
-            ],
-            // initialValue: "Normal",
-          ),
-          gapH(16),
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Due Date",
-                      textAlign: TextAlign.center,
-                      style: generalTextStyle(12).copyWith(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600,
+            gapH(16),
+            Text(
+              "Priority",
+              textAlign: TextAlign.center,
+              style: generalTextStyle(12).copyWith(
+                color: Colors.black,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            gapH(4),
+            GeneralDropdownTextField(
+              onChanged: (value) {
+                addTaskBloc.priorityTEC.text = value;
+              },
+              validate: (value) =>
+                  IsEmptyValidation().validate(value, title: "priority"),
+              items: const [
+                "Normal",
+                "Medium",
+                "High",
+                "Urgent",
+              ],
+              // initialValue: "Normal",
+            ),
+            gapH(16),
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Due Date",
+                        textAlign: TextAlign.center,
+                        style: generalTextStyle(12).copyWith(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                    gapH(4),
-                    GeneralTextField(
-                      readonly: true,
-                      onTap: () => selectDate(context),
-                      hintText: "Select a date",
-                      validate: (value) => IsEmptyValidation()
-                          .validate(value, title: "due date"),
-                      controller: addTaskBloc.dueDateTEC,
-                      textInputAction: TextInputAction.next,
-                    ),
-                  ],
-                ),
-              ),
-              gapW(12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Due Time",
-                      textAlign: TextAlign.center,
-                      style: generalTextStyle(12).copyWith(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600,
+                      gapH(4),
+                      GeneralTextField(
+                        readonly: true,
+                        onTap: () => selectDate(context),
+                        hintText: "Select a date",
+                        validate: (value) => IsEmptyValidation()
+                            .validate(value, title: "due date"),
+                        controller: addTaskBloc.dueDateTEC,
+                        textInputAction: TextInputAction.next,
                       ),
-                    ),
-                    gapH(4),
-                    GeneralTextField(
-                      readonly: true,
-                      onTap: () => selectTime(context),
-                      hintText: "Select a time",
-                      validate: (value) => IsEmptyValidation()
-                          .validate(value, title: "due time"),
-                      controller: addTaskBloc.dueTimeTEC,
-                      textInputAction: TextInputAction.next,
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-          gapH(16),
-          Text(
-            "Description",
-            textAlign: TextAlign.center,
-            style: generalTextStyle(12).copyWith(
-              color: Colors.black,
-              fontWeight: FontWeight.w600,
+                gapW(12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Due Time",
+                        textAlign: TextAlign.center,
+                        style: generalTextStyle(12).copyWith(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      gapH(4),
+                      GeneralTextField(
+                        readonly: true,
+                        onTap: () => selectTime(context),
+                        hintText: "Select a time",
+                        validate: (value) => IsEmptyValidation()
+                            .validate(value, title: "due time"),
+                        controller: addTaskBloc.dueTimeTEC,
+                        textInputAction: TextInputAction.next,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ),
-          gapH(4),
-          GeneralTextField(
-            hintText: "Write something",
-            validate: (value) =>
-                IsEmptyValidation().validate(value, title: "description"),
-            controller: addTaskBloc.descriptionTEC,
-            textInputAction: TextInputAction.next,
-            maxLines: 3,
-          ),
-          gapH(16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              GeneralTextButton(
-                height: 32.h,
-                title: "Cancel",
-                borderRadius: 4.r,
-                fgColor: Colors.black,
-                isMinimumWidth: true,
-                isSmallText: true,
-                bgColor: Colors.transparent,
-                onPressed: () {
-                  context.pop();
-                },
+            gapH(16),
+            Text(
+              "Description",
+              textAlign: TextAlign.center,
+              style: generalTextStyle(12).copyWith(
+                color: Colors.black,
+                fontWeight: FontWeight.w600,
               ),
-              gapW(8),
-              BlocBuilder<TaskBloc, TaskState>(builder: (_, state) {
-                return GeneralElevatedButton(
-                  marginH: 0,
+            ),
+            gapH(4),
+            GeneralTextField(
+              hintText: "Write something",
+              validate: (value) =>
+                  IsEmptyValidation().validate(value, title: "description"),
+              controller: addTaskBloc.descriptionTEC,
+              textInputAction: TextInputAction.next,
+              maxLines: 3,
+            ),
+            gapH(16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                GeneralTextButton(
                   height: 32.h,
+                  title: "Cancel",
+                  borderRadius: 4.r,
+                  fgColor: Colors.black,
                   isMinimumWidth: true,
                   isSmallText: true,
-                  title: "Create",
-                  loading: state is TaskLoadingState,
-                  borderRadius: 4.r,
+                  bgColor: Colors.transparent,
                   onPressed: () {
-                    context.read<TaskBloc>().add(
-                          AddTaskEvent(widget.groupId),
-                        );
-                    // widget.onCreate();
+                    context.pop();
                   },
-                );
-              }),
-            ],
-          ),
-        ],
+                ),
+                gapW(8),
+                BlocBuilder<TaskBloc, TaskState>(builder: (_, state) {
+                  return GeneralElevatedButton(
+                    marginH: 0,
+                    height: 32.h,
+                    isMinimumWidth: true,
+                    isSmallText: true,
+                    title: "Create",
+                    loading: state is TaskLoadingState,
+                    borderRadius: 4.r,
+                    onPressed: () {
+                      context.read<TaskBloc>().add(
+                            AddTaskEvent(widget.groupId),
+                          );
+                      // widget.onCreate();
+                    },
+                  );
+                }),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
