@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:kanban/presentation/bloc/section/section_bloc.dart';
+import 'package:kanban/presentation/bloc/section/section_task_bloc.dart';
 import 'package:kanban/presentation/screens/home/widgets/all_board.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -12,11 +12,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
-  late final SectionBloc sectionBloc;
+  late final SectionTaskBloc sectionBloc;
   @override
   void initState() {
     super.initState();
-    sectionBloc = BlocProvider.of<SectionBloc>(context);
+    sectionBloc = BlocProvider.of<SectionTaskBloc>(context);
     sectionBloc.add(FetchAllSectionsEvent());
   }
 
@@ -30,7 +30,7 @@ class HomeScreenState extends State<HomeScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.only(bottom: 16),
-        child: BlocBuilder<SectionBloc, SectionState>(
+        child: BlocBuilder<SectionTaskBloc, SectionState>(
           builder: (_, state) {
             return switch (state) {
               SectionInitialState _ =>

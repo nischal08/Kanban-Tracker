@@ -1,4 +1,4 @@
-part of 'section_bloc.dart';
+part of 'section_task_bloc.dart';
 
 abstract class SectionEvent {}
 

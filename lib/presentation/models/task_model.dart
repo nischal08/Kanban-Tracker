@@ -24,7 +24,7 @@ class TaskModel {
   final int commentCount;
   final String creatorId;
   final DateTime createdAt;
-  final dynamic due;
+  final Due? due;
   final String url;
   final dynamic duration;
 
@@ -65,7 +65,7 @@ class TaskModel {
     int? commentCount,
     String? creatorId,
     DateTime? createdAt,
-    dynamic due,
+    Due? due,
     String? url,
     dynamic duration,
   }) =>
@@ -106,7 +106,7 @@ class TaskModel {
         commentCount: json["comment_count"],
         creatorId: json["creator_id"],
         createdAt: DateTime.parse(json["created_at"]),
-        due: json["due"],
+        due: json["due"] == null ? null : Due.fromJson(json["due"]),
         url: json["url"],
         duration: json["duration"],
       );
@@ -130,5 +130,53 @@ class TaskModel {
         "due": due,
         "url": url,
         "duration": duration,
+      };
+}
+
+class Due {
+  final String date;
+  final String string;
+  final String lang;
+  final bool isRecurring;
+  final DateTime? datetime;
+
+  Due({
+    required this.date,
+    required this.string,
+    required this.lang,
+    required this.isRecurring,
+    required this.datetime,
+  });
+
+  Due copyWith({
+    String? date,
+    String? string,
+    String? lang,
+    bool? isRecurring,
+    DateTime? datetime,
+  }) =>
+      Due(
+        date: date ?? this.date,
+        string: string ?? this.string,
+        lang: lang ?? this.lang,
+        isRecurring: isRecurring ?? this.isRecurring,
+        datetime: datetime ?? this.datetime,
+      );
+
+  factory Due.fromJson(Map<String, dynamic> json) => Due(
+        date: json["date"],
+        string: json["string"],
+        lang: json["lang"],
+        isRecurring: json["is_recurring"] ?? false,
+        datetime:
+            json["datetime"] == null ? null : DateTime.parse(json["datetime"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "date": date,
+        "string": string,
+        "lang": lang,
+        "is_recurring": isRecurring,
+        "datetime": datetime!.toIso8601String(),
       };
 }

@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kanban/core/styles/app_sizes.dart';
 import 'package:kanban/core/styles/text_styles.dart';
-import 'package:kanban/presentation/bloc/section/section_bloc.dart';
+import 'package:kanban/presentation/bloc/section/section_task_bloc.dart';
 import 'package:kanban/presentation/screens/home/entity/text_item.dart';
 import 'package:kanban/presentation/screens/home/widgets/add_card_dialog.dart';
 import 'package:kanban/presentation/screens/home/widgets/edit_card_dialog.dart';
@@ -35,7 +35,7 @@ class _AllBoardState extends State<AllBoard> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: AppFlowyBoard(
-          controller: context.watch<SectionBloc>().controller,
+          controller: context.watch<SectionTaskBloc>().controller,
           cardBuilder: (context, group, groupItem) {
             log(group.id);
             return AppFlowyGroupCard(
@@ -58,7 +58,8 @@ class _AllBoardState extends State<AllBoard> {
               child: _buildCard(group, groupItem),
             );
           },
-          boardScrollController: context.watch<SectionBloc>().boardController,
+          boardScrollController:
+              context.watch<SectionTaskBloc>().boardController,
           footerBuilder: (context, columnData) {
             return AppFlowyGroupFooter(
               icon: Icon(Icons.add, size: 16.h),
@@ -66,8 +67,6 @@ class _AllBoardState extends State<AllBoard> {
               height: 40.h,
               margin: config.groupBodyPadding,
               onAddButtonClick: () async {
-                //TODO: add new card
-
                 await showModalBottomSheet(
                     context: context,
                     useSafeArea: true,
@@ -77,7 +76,7 @@ class _AllBoardState extends State<AllBoard> {
                         groupId: columnData.headerData.groupId,
                         onCreate: () {
                           context
-                              .read<SectionBloc>()
+                              .read<SectionTaskBloc>()
                               .boardController
                               .scrollToBottom(columnData.id);
                         },
@@ -106,7 +105,7 @@ class _AllBoardState extends State<AllBoard> {
                     ),
                   ),
                   moreIcon: Icon(
-                    Icons.more_horiz,
+                    Icons.edit_note_sharp,
                     size: 18.h,
                   ),
                   margin: config.groupBodyPadding,
@@ -134,6 +133,23 @@ class _AllBoardState extends State<AllBoard> {
     String title = '';
     String description = item is RichTextItem ? item.subtitle : '';
     String taskId = '';
+    Color priorityColor = Colors.green;
+
+    getPriorityColors(int value) {
+      switch (value) {
+        case 1:
+          return Colors.green;
+        case 2:
+          return Colors.yellow;
+        case 3:
+          return Colors.orange;
+        case 4:
+          return Colors.red;
+        default:
+          return Colors.green;
+      }
+    }
+
     List dataList = item is RichTextItem
         ? item.title.split('!@#')
         : item is TextItem
@@ -143,7 +159,9 @@ class _AllBoardState extends State<AllBoard> {
       title = dataList[0];
       taskId = dataList[1];
       commentCount = dataList[2];
+      priorityColor = getPriorityColors(int.tryParse(dataList[3]) ?? 1);
     }
+
     return GestureDetector(
       onTap: () async {
         //TODO: remaining to code for edit data
@@ -166,7 +184,7 @@ class _AllBoardState extends State<AllBoard> {
                 width: 5.w,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(50.r),
-                  color: Colors.green,
+                  color: priorityColor,
                 ),
               ),
               gapW(8),

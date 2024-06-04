@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:kanban/core/styles/app_sizes.dart';
 import 'package:kanban/core/styles/text_styles.dart';
-import 'package:kanban/presentation/bloc/task/task_bloc.dart';
+import 'package:kanban/presentation/bloc/task/add_task_bloc.dart';
 import 'package:kanban/presentation/protocols/is_empty_validation.dart';
 import 'package:kanban/presentation/widgets/general_dropdown.dart';
 import 'package:kanban/presentation/widgets/general_elevated_button.dart';
@@ -29,12 +29,12 @@ class _AddCardDialogState extends State<AddCardDialog> {
   DateTime lastDate = DateTime.now().add(const Duration(days: 365 * 18));
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
-  late final TaskBloc addTaskBloc;
+  late final AddTaskBloc addTaskBloc;
 
   @override
   void initState() {
     super.initState();
-    addTaskBloc = context.read<TaskBloc>();
+    addTaskBloc = context.read<AddTaskBloc>();
   }
 
   @override
@@ -84,7 +84,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
   SingleChildScrollView bodyContent(BuildContext context) {
     return SingleChildScrollView(
       child: Form(
-        key: context.watch<TaskBloc>().formKey,
+        key: context.watch<AddTaskBloc>().formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -229,17 +229,17 @@ class _AddCardDialogState extends State<AddCardDialog> {
                   },
                 ),
                 gapW(8),
-                BlocBuilder<TaskBloc, TaskState>(builder: (_, state) {
+                BlocBuilder<AddTaskBloc, TaskState>(builder: (_, state) {
                   return GeneralElevatedButton(
                     marginH: 0,
                     height: 32.h,
                     isMinimumWidth: true,
                     isSmallText: true,
                     title: "Create",
-                    loading: state is TaskLoadingState,
+                    loading: state is AddTaskLoadingState,
                     borderRadius: 4.r,
                     onPressed: () {
-                      context.read<TaskBloc>().add(
+                      context.read<AddTaskBloc>().add(
                             AddTaskEvent(widget.groupId),
                           );
                       // widget.onCreate();

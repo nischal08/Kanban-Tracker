@@ -1,27 +1,26 @@
-part of 'task_bloc.dart';
+part of 'add_task_bloc.dart';
 
-sealed class TaskEvent {}
+abstract class TaskEvent {}
 
 class AddTaskEvent extends TaskEvent {
   final String sectionId;
   AddTaskEvent(this.sectionId);
 }
-
 // states.dart
 abstract class TaskState {}
 
-class TaskInitialState extends TaskState {}
+class AddTaskInitialState extends TaskState {}
 
-class TaskLoadingState extends TaskState {}
+class AddTaskLoadingState extends TaskState {}
 
-abstract class TaskSuccessState extends TaskState {}
+abstract class AddTaskSuccessState extends TaskState {}
 
-class ConcreteTaskSuccessState implements TaskSuccessState {
-  ConcreteTaskSuccessState();
+class ConcreteAddTaskSuccessState implements AddTaskSuccessState {
+  ConcreteAddTaskSuccessState();
 }
 
-class TaskErrorState extends TaskState {
+class AddTaskErrorState extends TaskState {
   final String error;
 
-  TaskErrorState(this.error);
+  AddTaskErrorState(this.error);
 }

@@ -139,6 +139,17 @@ class ApiManager {
               )
               .timeout(timeoutDuration);
           break;
+        case RequestType.deleteWithToken:
+          resp = await _client
+              .delete(
+                url,
+                options: Options(
+                  headers: headingWithToken,
+                  responseType: responseType,
+                ),
+              )
+              .timeout(timeoutDuration);
+          break;
         default:
           return throw RequestTypeNotFoundException(
             "The HTTP request method is not found",
@@ -162,6 +173,10 @@ class ApiManager {
         return responseJson;
 
       case 201:
+        dynamic responseJson = response.data;
+        return responseJson;
+        
+      case 204:
         dynamic responseJson = response.data;
         return responseJson;
 

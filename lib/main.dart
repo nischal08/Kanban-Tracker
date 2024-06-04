@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:kanban/core/styles/themes.dart';
 import 'package:kanban/core/dio/dio_dependency_injection.dart';
-import 'package:kanban/presentation/bloc/task/task_bloc.dart';
-import 'package:kanban/presentation/repositories/add_task.dart';
-import 'package:kanban/presentation/repositories/get_sections.dart';
+import 'package:kanban/core/styles/themes.dart';
 import 'package:kanban/core/values/routes_config.dart';
-import 'package:kanban/presentation/bloc/section/section_bloc.dart';
+import 'package:kanban/presentation/bloc/section/section_task_bloc.dart';
+import 'package:kanban/presentation/bloc/task/add_task_bloc.dart';
+import 'package:kanban/presentation/repositories/get_sections.dart';
 import 'package:kanban/presentation/repositories/task.dart';
 
 main() async {
@@ -30,12 +29,12 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MultiBlocProvider(
           providers: [
-            BlocProvider<SectionBloc>(
-              create: (context) => SectionBloc(
-                  GetAllSectionsRepository(), GetAllTasksRepository()),
+            BlocProvider<SectionTaskBloc>(
+              create: (context) => SectionTaskBloc(
+                  GetAllSectionsRepository(), TasksRepositoryImpl()),
             ),
-            BlocProvider<TaskBloc>(
-              create: (context) => TaskBloc(AddTaskRepository()),
+            BlocProvider<AddTaskBloc>(
+              create: (context) => AddTaskBloc(TasksRepositoryImpl()),
             ),
           ],
           child: MaterialApp.router(
