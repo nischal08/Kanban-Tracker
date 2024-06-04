@@ -1,5 +1,5 @@
 abstract class Validation {
-  String? validate(
+   String? validate(
     String value,
   );
 }

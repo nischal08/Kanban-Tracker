@@ -1,14 +1,12 @@
 import 'dart:developer';
-
 import 'package:appflowy_board/appflowy_board.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/presentation/models/section_model.dart';
 import 'package:kanban/presentation/models/task_model.dart';
 import 'package:kanban/presentation/repositories/get_sections.dart';
-import 'package:kanban/presentation/repositories/get_tasks.dart';
+import 'package:kanban/presentation/repositories/task.dart';
 import 'package:kanban/presentation/screens/home/entity/text_item.dart';
-
 part 'section_state.dart';
 
 class SectionBloc extends Bloc<SectionEvent, SectionState> {
@@ -41,7 +39,8 @@ class SectionBloc extends Bloc<SectionEvent, SectionState> {
         final Map<String, List<TaskModel>> tasksMap = {};
         for (Section section in sections) {
           if (section.id.isNotEmpty) {
-            tasksMap[section.id] = await taskRepository.call(section.id);
+            tasksMap[section.id] =
+                await taskRepository.fetchAllTask(section.id);
             allGroupData.add(
               AppFlowyGroupData(
                 id: section.id,

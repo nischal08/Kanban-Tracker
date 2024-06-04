@@ -68,20 +68,25 @@ class _AllBoardState extends State<AllBoard> {
               onAddButtonClick: () async {
                 //TODO: add new card
 
-                await showDialog(
+                await showModalBottomSheet(
                     context: context,
+                    useSafeArea: false,isScrollControlled: true,
                     builder: (BuildContext dgContext) {
-                      return const AddCardDialog();
+                      return AddCardDialog(
+                        groupId: columnData.headerData.groupId,
+                        onCreate: () {
+                          context
+                              .read<SectionBloc>()
+                              .boardController
+                              .scrollToBottom(columnData.id);
+                        },
+                      );
                     });
 
                 // context.read<SectionBloc>().controller.addGroupItem(
                 //       columnData.headerData.groupId,
                 //       RichTextItem(title: "Hello1", subtitle: "how are you"),
                 //     );
-                // context
-                //     .read<SectionBloc>()
-                //     .boardController
-                //     .scrollToBottom(columnData.id);
               },
             );
           },
@@ -99,14 +104,9 @@ class _AllBoardState extends State<AllBoard> {
                       style: generalTextStyle(16),
                     ),
                   ),
-                  moreIcon: Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 50.w),
-                      child: Icon(
-                        Icons.more_horiz,
-                        size: 18.h,
-                      ),
-                    ),
+                  moreIcon: Icon(
+                    Icons.more_horiz,
+                    size: 18.h,
                   ),
                   margin: config.groupBodyPadding,
                 ),

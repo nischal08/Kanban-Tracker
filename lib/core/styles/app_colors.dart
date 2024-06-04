@@ -12,4 +12,5 @@ class AppColors {
   static const Color backgroundColor = Colors.white;
   static const Color cardBorderColor = Color(0xffeaeaea);
   static const Color boardBgColor = Color(0xfff1f1f2);
+  static const Color textfieldBorderColor = Color(0xffE3E3E3);
 }

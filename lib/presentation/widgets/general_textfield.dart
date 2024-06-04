@@ -159,25 +159,24 @@ class GeneralTextFieldState extends State<GeneralTextField> {
           errorMaxLines: 3,
           labelText: widget.labelText,
           labelStyle:
-              generalTextStyle(widget.isSmallText ? 10.sp : 12.sp).copyWith(
+              generalTextStyle(widget.isSmallText ? 10 : 12).copyWith(
             color: widget.labelTextColor ?? AppColors.textSoftGreyColor,
             fontWeight: FontWeight.w400,
           ),
           hintText: widget.hintText,
-          hintStyle: TextStyle(
-            fontSize: widget.isHintTextBig
-                ? 14.sp
-                : widget.isSmallText
-                    ? 10.sp
-                    : 12.sp,
+          hintStyle: generalTextStyle(widget.isHintTextBig
+                  ? 14
+                  : widget.isSmallText
+                      ? 10
+                      : 12)
+              .copyWith(
             color: widget.hintColor ?? AppColors.textSoftGreyColor,
             fontWeight:
                 widget.isHintTextBig ? FontWeight.w600 : FontWeight.w400,
           ),
           suffixText: widget.suffixText,
-          suffixStyle: TextStyle(
+          suffixStyle: generalTextStyle(widget.isSmallText ? 12 : 14).copyWith(
             color: AppColors.textSoftGreyColor,
-            fontSize: widget.isSmallText ? 12.sp : 14.sp,
           ),
           suffixIcon: widget.sufixWidget ??
               (widget.suffixText != null
@@ -244,7 +243,7 @@ class GeneralTextFieldState extends State<GeneralTextField> {
                 : BorderRadius.circular(widget.borderRadius ?? AppSizes.radius),
             borderSide: BorderSide(
               width: 1,
-              color: widget.borderColor ?? const Color(0xffE3E3E3),
+              color: widget.borderColor ?? AppColors.textfieldBorderColor,
             ),
           ),
           disabledBorder: OutlineInputBorder(
@@ -254,7 +253,8 @@ class GeneralTextFieldState extends State<GeneralTextField> {
                     bottomLeft: Radius.circular(widget.borderRadius ?? 8.r),
                   )
                 : BorderRadius.circular(widget.borderRadius ?? AppSizes.radius),
-            borderSide: const BorderSide(width: 1, color: Color(0xffE3E3E3)),
+            borderSide: const BorderSide(
+                width: 1, color: AppColors.textfieldBorderColor),
           ),
           fillColor: widget.fillColor ?? AppColors.textFieldInputColor,
           filled: true,

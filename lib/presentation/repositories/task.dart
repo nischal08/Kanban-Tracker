@@ -4,12 +4,12 @@ import 'package:kanban/core/values/enums.dart';
 import 'package:kanban/presentation/models/task_model.dart';
 
 abstract class TaskRepository {
-  Future<List<TaskModel>> call(String sectionId);
+  Future<List<TaskModel>> fetchAllTask(String sectionId);
 }
 
-class GetAllTasksRepository implements TaskRepository {
+class GetAllTasksRepository extends TaskRepository {
   @override
-  Future<List<TaskModel>> call(String sectionId) async {
+  Future<List<TaskModel>> fetchAllTask(String sectionId) async {
     try {
       final response = await getApiClient().request(
         url: AppUrls.getSectionTasksUrl.replaceAll("[section_id]", sectionId),
@@ -23,3 +23,7 @@ class GetAllTasksRepository implements TaskRepository {
     }
   }
 }
+
+
+
+

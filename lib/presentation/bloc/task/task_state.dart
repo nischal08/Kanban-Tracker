@@ -2,9 +2,9 @@ part of 'task_bloc.dart';
 
 sealed class TaskEvent {}
 
-class FetchAllTasksEvent extends TaskEvent {
+class AddTaskEvent extends TaskEvent {
   final String sectionId;
-  FetchAllTasksEvent(this.sectionId);
+  AddTaskEvent(this.sectionId);
 }
 
 // states.dart
@@ -14,14 +14,10 @@ class TaskInitialState extends TaskState {}
 
 class TaskLoadingState extends TaskState {}
 
-abstract class TaskSuccessState extends TaskState {
-  List<TaskModel> get sections;
-}
+abstract class TaskSuccessState extends TaskState {}
 
 class ConcreteTaskSuccessState implements TaskSuccessState {
-  @override
-  final List<TaskModel> sections;
-  ConcreteTaskSuccessState(this.sections);
+  ConcreteTaskSuccessState();
 }
 
 class TaskErrorState extends TaskState {

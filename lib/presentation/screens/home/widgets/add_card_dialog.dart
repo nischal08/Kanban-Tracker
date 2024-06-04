@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:kanban/core/styles/app_sizes.dart';
 import 'package:kanban/core/styles/text_styles.dart';
+import 'package:kanban/presentation/bloc/task/task_bloc.dart';
+import 'package:kanban/presentation/protocols/is_empty_validation.dart';
+import 'package:kanban/presentation/widgets/general_dropdown.dart';
 import 'package:kanban/presentation/widgets/general_elevated_button.dart';
 import 'package:kanban/presentation/widgets/general_text_button.dart';
 import 'package:kanban/presentation/widgets/general_textfield.dart';
 
 class AddCardDialog extends StatefulWidget {
+  final VoidCallback onCreate;
+  final String groupId;
   const AddCardDialog({
     super.key,
+    required this.onCreate,
+    required this.groupId,
   });
 
   @override
@@ -17,29 +26,31 @@ class AddCardDialog extends StatefulWidget {
 }
 
 class _AddCardDialogState extends State<AddCardDialog> {
-  final TextEditingController titleTEC = TextEditingController();
-  final TextEditingController descriptionTEC = TextEditingController();
-  final TextEditingController dueDateTEC = TextEditingController();
-  final TextEditingController dueTimeTEC = TextEditingController();
-  final addCardFormKey = GlobalKey<FormState>();
   DateTime lastDate = DateTime.now().add(const Duration(days: 365 * 18));
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
+  late final TaskBloc addTaskBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    addTaskBloc = context.read<TaskBloc>();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      insetPadding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: Container(
-        padding: EdgeInsets.all(
-          16.h,
-        ),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12.r),
-        ),
-        child: bodyContent(context),
+    return Container(
+      padding: EdgeInsets.only(
+        bottom: 16.h + MediaQuery.of(context).viewInsets.bottom,
+        top: 16.h,
+        left: 16.h,
+        right: 16.h,
       ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: bodyContent(context),
     );
   }
 
@@ -51,7 +62,8 @@ class _AddCardDialogState extends State<AddCardDialog> {
         lastDate: lastDate);
     if (picked != null && picked != selectedDate) {
       selectedDate = picked;
-      dueDateTEC.text = DateFormat("dd-MM-yyyy").format(selectedDate);
+      addTaskBloc.dueDateTEC.text =
+          DateFormat("dd-MM-yyyy").format(selectedDate);
       setState(() {});
     }
   }
@@ -63,7 +75,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
     );
     if (picked != null && picked != selectedTime) {
       selectedTime = picked;
-      dueTimeTEC.text =
+      addTaskBloc.dueTimeTEC.text =
           '${selectedTime.hour}:${selectedTime.minute} ${selectedTime.period.name.toUpperCase()} ';
       setState(() {});
     }
@@ -71,7 +83,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
 
   Form bodyContent(BuildContext context) {
     return Form(
-      key: addCardFormKey,
+      key: context.watch<TaskBloc>().formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -95,14 +107,15 @@ class _AddCardDialogState extends State<AddCardDialog> {
           ),
           gapH(4),
           GeneralTextField(
-            controller: titleTEC,
-            validate: () {},
+            controller: addTaskBloc.titleTEC,
+            validate: (value) =>
+                IsEmptyValidation().validate(value, title: "title"),
             textInputAction: TextInputAction.next,
             hintText: "Write something",
           ),
           gapH(16),
           Text(
-            "Due Date",
+            "Priority",
             textAlign: TextAlign.center,
             style: generalTextStyle(12).copyWith(
               color: Colors.black,
@@ -110,31 +123,75 @@ class _AddCardDialogState extends State<AddCardDialog> {
             ),
           ),
           gapH(4),
-          GeneralTextField(
-            readonly: true,
-            onTap: () => selectDate(context),
-            hintText: "Select a date",
-            controller: dueDateTEC,
-            validate: () {},
-            textInputAction: TextInputAction.next,
+          GeneralDropdownTextField(
+            onChanged: (value) {
+              addTaskBloc.priorityTEC.text = value;
+            },
+            validate: (value) =>
+                IsEmptyValidation().validate(value, title: "priority"),
+            items: const [
+              "Normal",
+              "Medium",
+              "High",
+              "Urgent",
+            ],
+            // initialValue: "Normal",
           ),
           gapH(16),
-          Text(
-            "Due Time",
-            textAlign: TextAlign.center,
-            style: generalTextStyle(12).copyWith(
-              color: Colors.black,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          gapH(4),
-          GeneralTextField(
-            readonly: true,
-            onTap: () => selectTime(context),
-            hintText: "Select a time",
-            controller: dueTimeTEC,
-            validate: () {},
-            textInputAction: TextInputAction.next,
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Due Date",
+                      textAlign: TextAlign.center,
+                      style: generalTextStyle(12).copyWith(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    gapH(4),
+                    GeneralTextField(
+                      readonly: true,
+                      onTap: () => selectDate(context),
+                      hintText: "Select a date",
+                      validate: (value) => IsEmptyValidation()
+                          .validate(value, title: "due date"),
+                      controller: addTaskBloc.dueDateTEC,
+                      textInputAction: TextInputAction.next,
+                    ),
+                  ],
+                ),
+              ),
+              gapW(12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Due Time",
+                      textAlign: TextAlign.center,
+                      style: generalTextStyle(12).copyWith(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    gapH(4),
+                    GeneralTextField(
+                      readonly: true,
+                      onTap: () => selectTime(context),
+                      hintText: "Select a time",
+                      validate: (value) => IsEmptyValidation()
+                          .validate(value, title: "due time"),
+                      controller: addTaskBloc.dueTimeTEC,
+                      textInputAction: TextInputAction.next,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
           gapH(16),
           Text(
@@ -148,8 +205,9 @@ class _AddCardDialogState extends State<AddCardDialog> {
           gapH(4),
           GeneralTextField(
             hintText: "Write something",
-            controller: descriptionTEC,
-            validate: () {},
+            validate: (value) =>
+                IsEmptyValidation().validate(value, title: "description"),
+            controller: addTaskBloc.descriptionTEC,
             textInputAction: TextInputAction.next,
             maxLines: 3,
           ),
@@ -166,21 +224,27 @@ class _AddCardDialogState extends State<AddCardDialog> {
                 isSmallText: true,
                 bgColor: Colors.transparent,
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  context.pop();
                 },
               ),
               gapW(8),
-              GeneralElevatedButton(
-                marginH: 0,
-                height: 32.h,
-                isMinimumWidth: true,
-                isSmallText: true,
-                title: "Create",
-                borderRadius: 4.r,
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
+              BlocBuilder<TaskBloc, TaskState>(builder: (_, state) {
+                return GeneralElevatedButton(
+                  marginH: 0,
+                  height: 32.h,
+                  isMinimumWidth: true,
+                  isSmallText: true,
+                  title: "Create",
+                  loading: state is TaskLoadingState,
+                  borderRadius: 4.r,
+                  onPressed: () {
+                    context.read<TaskBloc>().add(
+                          AddTaskEvent(widget.groupId),
+                        );
+                    // widget.onCreate();
+                  },
+                );
+              }),
             ],
           ),
         ],

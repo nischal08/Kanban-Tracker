@@ -1,28 +1,24 @@
 import 'package:kanban/core/dio/dio_dependency_injection.dart';
 import 'package:kanban/core/values/constants/app_urls.dart';
 import 'package:kanban/core/values/enums.dart';
+import 'package:kanban/presentation/models/task_model.dart';
 
-abstract class TaskRepository {
-  Future<void> call(String sectionId);
+abstract class TaskAddRepository {
+  Future<TaskModel> addTask(
+    Map body,
+  );
 }
 
-class AddTaskRepository implements TaskRepository {
+class AddTaskRepository implements TaskAddRepository {
   @override
-  Future<void> call(String sectionId) async {
-    Map body = {
-      "content": "Project setup (From API)",
-      "description": "Project setup (From API) description",
-      "due_string": "tomorrow at 12:00",
-      "due_lang": "en",
-      "priority": 4,
-      "section_id": sectionId
-    };
+  Future<TaskModel> addTask(Map body) async {
     try {
-      await getApiClient().request(
-        url: AppUrls.getSectionTasksUrl.replaceAll("[section_id]", sectionId),
-        requestType: RequestType.getWithToken,
+      final response = await getApiClient().request(
+        url: AppUrls.addTasksUrl,
+        requestType: RequestType.postWithToken,
         body: body,
       );
+      return TaskModel.fromJson(response);
     } catch (_) {
       rethrow;
     }

@@ -4,6 +4,8 @@ class AppUrls {
       "$baseUrl/sections?project_id=2334093161";
   static const String getSectionTasksUrl =
       "$baseUrl/tasks?section_id=[section_id]";
+  static const String addTasksUrl =
+      "$baseUrl/tasks";
   
   
 }
