@@ -95,7 +95,7 @@ class _AllBoardState extends State<AllBoard> {
           headerBuilder: (context, columnData) {
             return Column(
               children: [
-              gapH(4),
+              gapH(8),
                 AppFlowyGroupHeader(
                   icon: const Icon(Icons.lightbulb_circle),
                   title: Expanded(
