@@ -80,6 +80,20 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    if (context.read<SectionTaskBloc>().state is ConcreteSectionsSuccessState) {
+      TaskModel task = (context.read<SectionTaskBloc>().state
+              as ConcreteSectionsSuccessState)
+          .tasks[widget.sectionId]!
+          .firstWhere((element) {
+        return widget.itemContent.contains(element.id);
+      });
+      context.read<CommentBloc>().add(FetchAllCommentsEvent(taskId: task.id));
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -112,8 +126,8 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
                       ),
                     );
                   case ConcreteSectionsSuccessState _:
-                    late TaskModel task;
-                    task = state.tasks[widget.sectionId]!.firstWhere((element) {
+                    TaskModel task =
+                        state.tasks[widget.sectionId]!.firstWhere((element) {
                       return widget.itemContent.contains(element.id);
                     });
                     return bodyContent(context, task);
@@ -143,7 +157,6 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
   }
 
   Widget bodyContent(BuildContext context, TaskModel task) {
-    context.read<CommentBloc>().add(FetchAllCommentsEvent(taskId: task.id));
     String createdDate =
         "${DateFormat().add_MMMEd().format(task.createdAt)}, ${DateFormat().addPattern("hh:mm a").format(task.createdAt)}";
     String dueDate = task.due?.datetime == null
@@ -270,13 +283,12 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
                           );
                         }
                         return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: state.comments
                                 .map((e) => Padding(
-                                
-                                  padding:  EdgeInsets.only(top: 6.h),
-                                  child: CommentWidget(e),
-                                ))
+                                      padding: EdgeInsets.only(top: 6.h),
+                                      child: CommentWidget(e),
+                                    ))
                                 .toList());
                       case SectionInitialState _:
                       default:
@@ -284,114 +296,117 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
                     }
                   },
                 ),
-                gapH(55),
+                if (task.sectionId != "157252879") gapH(55),
               ],
             ),
           ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            left: 0,
-            child: Container(
-              color: Colors.white,
-              padding: EdgeInsets.only(top: 16.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  BlocBuilder<DeleteTaskCubit, TaskState>(
-                    builder: (_, state) {
-                      return IconButton(
-                        icon: Icon(
-                          Icons.delete,
-                          size: 21.h,
-                          color: Theme.of(context).colorScheme.error,
-                        ),
-                        onPressed: () async {
-                          bool continueProgram = (await showDialog(
-                                  context: context,
-                                  barrierColor: Colors.black.withOpacity(0.8),
-                                  builder: (BuildContext dgContext) {
-                                    return const ConfirmationDialog(
-                                      title:
-                                          "Do you sure want to delete the task?",
-                                    );
-                                  })) ??
-                              false;
-                          if (continueProgram && context.mounted) {
-                            context.read<DeleteTaskCubit>().deleteTask(task.id);
-                          }
-                        },
-                      );
-                    },
-                  ),
-                  IconButton(
-                    onPressed: () async {
-                      bool? isSuccess = await showModalBottomSheet(
-                          context: context,
-                          useSafeArea: true,
-                          isScrollControlled: true,
-                          builder: (BuildContext dgContext) {
-                            return AddAndEditCardBottomsheet(
-                              groupId: task.sectionId,
-                              task: task,
-                              onCreate: () {
-                                context
-                                    .read<SectionTaskBloc>()
-                                    .boardController
-                                    .scrollToBottom(task.sectionId);
-                              },
-                            );
-                          });
-              
-                      if (isSuccess != null) {
-                        if (isSuccess && context.mounted) {
-                          context.pop();
-                        }
-                      }
-                    },
-                    icon: Icon(
-                      Icons.edit_note,
-                      size: 24.h,
+          if (task.sectionId != "157252879")
+            Positioned(
+              bottom: 0,
+              right: 0,
+              left: 0,
+              child: Container(
+                color: Colors.white,
+                padding: EdgeInsets.only(top: 16.h),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    BlocBuilder<DeleteTaskCubit, TaskState>(
+                      builder: (_, state) {
+                        return IconButton(
+                          icon: Icon(
+                            Icons.delete,
+                            size: 21.h,
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                          onPressed: () async {
+                            bool continueProgram = (await showDialog(
+                                    context: context,
+                                    barrierColor: Colors.black.withOpacity(0.8),
+                                    builder: (BuildContext dgContext) {
+                                      return const ConfirmationDialog(
+                                        title:
+                                            "Do you sure want to delete the task?",
+                                      );
+                                    })) ??
+                                false;
+                            if (continueProgram && context.mounted) {
+                              context
+                                  .read<DeleteTaskCubit>()
+                                  .deleteTask(task.id);
+                            }
+                          },
+                        );
+                      },
                     ),
-                  ),
-                  const Spacer(),
-                  GeneralTextButton(
-                    height: 32.h,
-                    title: isStarted ? "Stop" : "Start",
-                    borderRadius: 4.r,
-                    fgColor: Colors.black,
-                    isMinimumWidth: true,
-                    isSmallText: true,
-                    bgColor: Colors.transparent,
-                    onPressed: () {
-                      if (isStarted) {
-                        stopWatch();
-                      } else {
-                        startWatch();
-                      }
-                    },
-                  ),
-                  gapW(4),
-                  BlocBuilder<MoveTaskCubit, TaskState>(
-                    builder: (_, state) {
-                      return GeneralElevatedButton(
-                        marginH: 0,
-                        height: 32.h,
-                        isMinimumWidth: true,
-                        isSmallText: true,
-                        title: "Finished",
-                        loading: state is TaskLoadingState,
-                        borderRadius: 4.r,
-                        onPressed: () {
-                          context.read<MoveTaskCubit>().movetask(task);
-                        },
-                      );
-                    },
-                  ),
-                ],
+                    IconButton(
+                      onPressed: () async {
+                        bool? isSuccess = await showModalBottomSheet(
+                            context: context,
+                            useSafeArea: true,
+                            isScrollControlled: true,
+                            builder: (BuildContext dgContext) {
+                              return AddAndEditCardBottomsheet(
+                                groupId: task.sectionId,
+                                task: task,
+                                onCreate: () {
+                                  context
+                                      .read<SectionTaskBloc>()
+                                      .boardController
+                                      .scrollToBottom(task.sectionId);
+                                },
+                              );
+                            });
+
+                        if (isSuccess != null) {
+                          if (isSuccess && context.mounted) {
+                            context.pop();
+                          }
+                        }
+                      },
+                      icon: Icon(
+                        Icons.edit_note,
+                        size: 24.h,
+                      ),
+                    ),
+                    const Spacer(),
+                    GeneralTextButton(
+                      height: 32.h,
+                      title: isStarted ? "Stop" : "Start",
+                      borderRadius: 4.r,
+                      fgColor: Colors.black,
+                      isMinimumWidth: true,
+                      isSmallText: true,
+                      bgColor: Colors.transparent,
+                      onPressed: () {
+                        if (isStarted) {
+                          stopWatch();
+                        } else {
+                          startWatch();
+                        }
+                      },
+                    ),
+                    gapW(4),
+                    BlocBuilder<MoveTaskCubit, TaskState>(
+                      builder: (_, state) {
+                        return GeneralElevatedButton(
+                          marginH: 0,
+                          height: 32.h,
+                          isMinimumWidth: true,
+                          isSmallText: true,
+                          title: "Finished",
+                          loading: state is TaskLoadingState,
+                          borderRadius: 4.r,
+                          onPressed: () {
+                            context.read<MoveTaskCubit>().movetask(task);
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
