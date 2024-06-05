@@ -27,27 +27,28 @@ class TaskModel {
   final Due? due;
   final String url;
   final TaskDuration? duration;
+  final Stopwatch stopwatch;
 
-  TaskModel({
-    required this.id,
-    required this.assignerId,
-    required this.assigneeId,
-    required this.projectId,
-    required this.sectionId,
-    required this.parentId,
-    required this.order,
-    required this.content,
-    required this.description,
-    required this.isCompleted,
-    required this.labels,
-    required this.priority,
-    required this.commentCount,
-    required this.creatorId,
-    required this.createdAt,
-    required this.due,
-    required this.url,
-    required this.duration,
-  });
+  TaskModel(
+      {required this.id,
+      required this.assignerId,
+      required this.assigneeId,
+      required this.projectId,
+      required this.sectionId,
+      required this.parentId,
+      required this.order,
+      required this.content,
+      required this.description,
+      required this.isCompleted,
+      required this.labels,
+      required this.priority,
+      required this.commentCount,
+      required this.creatorId,
+      required this.createdAt,
+      required this.due,
+      required this.url,
+      required this.duration,
+      required this.stopwatch});
 
   TaskModel copyWith({
     String? id,
@@ -68,6 +69,7 @@ class TaskModel {
     Due? due,
     String? url,
     TaskDuration? duration,
+    Stopwatch? stopwatch,
   }) =>
       TaskModel(
         id: id ?? this.id,
@@ -88,6 +90,7 @@ class TaskModel {
         due: due ?? this.due,
         url: url ?? this.url,
         duration: duration ?? this.duration,
+        stopwatch: stopwatch ?? this.stopwatch,
       );
 
   factory TaskModel.fromJson(Map<String, dynamic> json) => TaskModel(
@@ -108,6 +111,7 @@ class TaskModel {
         createdAt: DateTime.parse(json["created_at"]),
         due: json["due"] == null ? null : Due.fromJson(json["due"]),
         url: json["url"],
+        stopwatch: Stopwatch(),
         duration: json["duration"] == null
             ? null
             : TaskDuration.fromJson(json["duration"]),

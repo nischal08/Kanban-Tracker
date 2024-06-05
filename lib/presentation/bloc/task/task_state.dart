@@ -12,6 +12,12 @@ class UpdateTaskEvent extends TaskEvent {
   final String taskId;
   UpdateTaskEvent({required this.sectionId, required this.taskId});
 }
+class LogTaskEvent extends TaskEvent {
+  final String sectionId;
+  final int minute;
+  final String taskId;
+  LogTaskEvent(this.minute, {required this.sectionId, required this.taskId});
+}
 
 // states.dart
 abstract class TaskState {}

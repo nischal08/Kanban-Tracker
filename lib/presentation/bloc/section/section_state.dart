@@ -2,7 +2,10 @@ part of 'section_task_bloc.dart';
 
 abstract class SectionEvent {}
 
-class FetchAllSectionsEvent extends SectionEvent {}
+class FetchAllSectionsEvent extends SectionEvent {
+  final bool showLoading;
+  FetchAllSectionsEvent([this.showLoading = true]);
+}
 
 // states.dart
 
@@ -14,7 +17,7 @@ class SectionLoadingState extends SectionState {}
 
 abstract class SectionSuccessState extends SectionState {
   List<Section> get sections;
-  Map<String,List<TaskModel>> get tasks;
+  Map<String, List<TaskModel>> get tasks;
 }
 
 class ConcreteSectionsSuccessState implements SectionSuccessState {

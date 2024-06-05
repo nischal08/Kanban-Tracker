@@ -55,7 +55,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         if (navKey.currentState!.mounted) {
           navKey.currentState?.context
               .read<SectionTaskBloc>()
-              .add(FetchAllSectionsEvent());
+              .add(FetchAllSectionsEvent(false));
           showToast("Task successfully added.");
           emit(ConcreteTaskSuccessState());
           navKey.currentState?.context.pop();
@@ -84,7 +84,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         if (navKey.currentState!.mounted) {
           navKey.currentState?.context
               .read<SectionTaskBloc>()
-              .add(FetchAllSectionsEvent());
+              .add(FetchAllSectionsEvent(false));
           showToast("Task successfully updated.");
           navKey.currentState?.context.pop();
           emit(ConcreteTaskSuccessState());
@@ -92,6 +92,29 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       } on Exception catch (error) {
         showToast("Error occured while adding task.");
         emit(TaskErrorState(error.toString()));
+      }
+    });
+    on<LogTaskEvent>((event, emit) async {
+      try {
+        if (event.minute == 0) {
+          return;
+        }
+        Map body = {
+          "section_id": event.sectionId,
+          "duration": event.minute,
+          "duration_unit": "minute"
+        };
+        log(body.toString());
+        await taskRepository.updateTask(body, taskId: event.taskId);
+        if (navKey.currentState!.mounted) {
+          navKey.currentState?.context
+              .read<SectionTaskBloc>()
+              .add(FetchAllSectionsEvent(false));
+          showToast("Task time spent successfully saved.");
+          // navKey.currentState?.context.pop();
+        }
+      } on Exception catch (_) {
+        showToast("Error occured while logging task time spent.");
       }
     });
   }

@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:appflowy_board/appflowy_board.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +7,6 @@ import 'package:kanban/presentation/models/task_model.dart';
 import 'package:kanban/presentation/repositories/section_repository.dart';
 import 'package:kanban/presentation/repositories/task_repository.dart';
 import 'package:kanban/presentation/screens/home/entity/text_item.dart';
-
 part 'section_state.dart';
 
 class SectionTaskBloc extends Bloc<SectionEvent, SectionState> {
@@ -46,7 +44,7 @@ class SectionTaskBloc extends Bloc<SectionEvent, SectionState> {
       tasksMap = {};
       allGroupData.clear();
       controller.clear();
-      emit(SectionLoadingState());
+      if (event.showLoading) emit(SectionLoadingState());
       try {
         final sections = await sectionRepository.call();
         for (Section section in sections) {

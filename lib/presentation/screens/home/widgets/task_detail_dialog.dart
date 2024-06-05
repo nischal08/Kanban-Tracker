@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -39,12 +38,11 @@ class TaskDetailDialog extends StatefulWidget {
 }
 
 class _TaskDetailDialogState extends State<TaskDetailDialog> {
-  Stopwatch watch = Stopwatch();
   Timer? timer;
   bool isStarted = false;
   String elapsedTime = '00:00:00.00';
 
-  void updateTime(Timer timer) {
+  void updateTime(Timer timer, Stopwatch watch) {
     if (watch.isRunning) {
       setState(() {
         elapsedTime = transformMilliSeconds(watch.elapsedMilliseconds);
@@ -65,20 +63,31 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
     return '$hourString$minuteString$secondString$hundredthString';
   }
 
-  void startWatch() {
+  void startWatch(Stopwatch watch) {
     setState(() {
       isStarted = true;
       watch.start();
-      timer = Timer.periodic(const Duration(milliseconds: 100), updateTime);
+      timer = Timer.periodic(
+          const Duration(milliseconds: 100), (t) => updateTime(t, watch));
     });
   }
 
-  void stopWatch() {
+  void stopWatch(TaskModel task) {
     setState(() {
       isStarted = false;
-      watch.stop();
+      task.stopwatch.stop();
       timer?.cancel();
     });
+    if (task.stopwatch.elapsed.inMinutes != 0) {
+      context.read<TaskBloc>().add(LogTaskEvent(
+            task.stopwatch.elapsed.inMinutes +
+                int.parse(task.duration?.amount != null
+                    ? task.duration!.amount
+                    : "0"),
+            sectionId: widget.sectionId,
+            taskId: task.id,
+          ));
+    }
   }
 
   late final AddCommentCubit addCommentBloc;
@@ -136,6 +145,14 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
                         state.tasks[widget.sectionId]!.firstWhere((element) {
                       return widget.itemContent.contains(element.id);
                     });
+                    elapsedTime = transformMilliSeconds(
+                        task.stopwatch.elapsedMilliseconds);
+                        if(task.stopwatch.isRunning){
+                         isStarted = true;
+                      task.stopwatch.start();
+                      timer = Timer.periodic(const Duration(milliseconds: 100),
+                          (t) => updateTime(t, task.stopwatch));
+                        }
                     return bodyContent(context, task);
                   case SectionInitialState _:
                   default:
@@ -409,9 +426,9 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
                       bgColor: Colors.transparent,
                       onPressed: () {
                         if (isStarted) {
-                          stopWatch();
+                          stopWatch(task);
                         } else {
-                          startWatch();
+                          startWatch(task.stopwatch);
                         }
                       },
                     ),
