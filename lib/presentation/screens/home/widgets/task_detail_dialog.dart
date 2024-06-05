@@ -8,14 +8,16 @@ import 'package:intl/intl.dart';
 import 'package:kanban/core/styles/styles.dart';
 import 'package:kanban/core/utils/priority_util.dart';
 import 'package:kanban/core/utils/time_util.dart';
-import 'package:kanban/presentation/bloc/comment/comment_bloc.dart';
+import 'package:kanban/presentation/bloc/comment/add_comment_cubit.dart';
+import 'package:kanban/presentation/bloc/comment/get_comment_bloc.dart';
 import 'package:kanban/presentation/bloc/section/section_task_bloc.dart';
 import 'package:kanban/presentation/bloc/task/delete_task.dart';
 import 'package:kanban/presentation/bloc/task/move_task_cubit.dart';
 import 'package:kanban/presentation/bloc/task/task_bloc.dart';
-import 'package:kanban/presentation/models/comment_model.dart';
 import 'package:kanban/presentation/models/task_model.dart';
 import 'package:kanban/presentation/screens/home/widgets/add_and_edit_card_bottomsheet.dart';
+import 'package:kanban/presentation/screens/home/widgets/add_comment_widget.dart';
+import 'package:kanban/presentation/screens/home/widgets/comment_info_widget.dart';
 import 'package:kanban/presentation/screens/home/widgets/task_info_column.dart';
 import 'package:kanban/presentation/widgets/confirmation_dialog.dart';
 import 'package:kanban/presentation/widgets/general_elevated_button.dart';
@@ -79,9 +81,11 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
     });
   }
 
+  late final AddCommentCubit addCommentBloc;
   @override
   void initState() {
     super.initState();
+    addCommentBloc = context.read<AddCommentCubit>();
     if (context.read<SectionTaskBloc>().state is ConcreteSectionsSuccessState) {
       TaskModel task = (context.read<SectionTaskBloc>().state
               as ConcreteSectionsSuccessState)
@@ -89,7 +93,9 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
           .firstWhere((element) {
         return widget.itemContent.contains(element.id);
       });
-      context.read<CommentBloc>().add(FetchAllCommentsEvent(taskId: task.id));
+      context
+          .read<GetCommentBloc>()
+          .add(FetchAllCommentsEvent(taskId: task.id));
     }
   }
 
@@ -254,17 +260,40 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
                   subTitle: task.description.isEmpty ? "N/A" : task.description,
                 ),
                 gapH(12),
-                const TaskInfoColumn(
-                  title: "Comments",
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const TaskInfoColumn(
+                      title: "Comments",
+                    ),
+                    gapW(4),
+                    GestureDetector(
+                      onTap: () async {
+                        await showModalBottomSheet(
+                            context: context,
+                            useSafeArea: true,
+                            isScrollControlled: true,
+                            builder: (BuildContext dgContext) {
+                              return AddCommentWidget(
+                                  task: task, addCommentBloc: addCommentBloc);
+                            });
+                      },
+                      child: Icon(
+                        Icons.add_circle_outline,
+                        color: Colors.grey.shade600,
+                        size: 15.h,
+                      ),
+                    )
+                  ],
                 ),
-                BlocBuilder<CommentBloc, CommentState>(
+                BlocBuilder<GetCommentBloc, GetCommentState>(
                   builder: (_, state) {
                     switch (state) {
-                      case CommentLoadingState _:
+                      case GetCommentLoadingState _:
                         return const Center(
                           child: CircularProgressIndicator(),
                         );
-                      case CommentErrorState _:
+                      case GetCommentErrorState _:
                         return Center(
                           child: Text(
                             state.error,
@@ -273,7 +302,7 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
                             ),
                           ),
                         );
-                      case CommentSuccessState _:
+                      case GetCommentSuccessState _:
                         if (state.comments.isEmpty) {
                           return Text(
                             "No Comments!",
@@ -287,7 +316,7 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
                             children: state.comments
                                 .map((e) => Padding(
                                       padding: EdgeInsets.only(top: 6.h),
-                                      child: CommentWidget(e),
+                                      child: CommentInfoWidget(e),
                                     ))
                                 .toList());
                       case SectionInitialState _:
@@ -409,35 +438,6 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
             ),
         ],
       ),
-    );
-  }
-}
-
-// ignore: must_be_immutable
-class CommentWidget extends StatelessWidget {
-  final CommentModel comment;
-  CommentWidget(this.comment, {super.key});
-  late String postedAt;
-  @override
-  Widget build(BuildContext context) {
-    postedAt =
-        "${DateFormat().add_MMMEd().format(comment.postedAt)}, ${DateFormat().addPattern("hh:mm a").format(comment.postedAt)}";
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          comment.content,
-          style: generalTextStyle(14).copyWith(
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        Text(
-          postedAt,
-          textAlign: TextAlign.end,
-          style: generalTextStyle(11).copyWith(
-              fontWeight: FontWeight.w500, color: Colors.grey.shade600),
-        ),
-      ],
     );
   }
 }

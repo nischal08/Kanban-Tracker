@@ -4,21 +4,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/presentation/models/comment_model.dart';
 import 'package:kanban/presentation/repositories/comment_repository.dart';
 
-part 'comment_state.dart';
+part 'get_comment_state.dart';
 
-class CommentBloc extends Bloc<CommentEvent, CommentState> {
+class GetCommentBloc extends Bloc<CommentEvent, GetCommentState> {
   final CommentRepository sectionRepository;
 
-  CommentBloc(this.sectionRepository) : super(CommentInitialState()) {
+  GetCommentBloc(this.sectionRepository) : super(GetCommentInitialState()) {
     on<FetchAllCommentsEvent>((event, emit) async {
-      emit(CommentLoadingState());
+      emit(GetCommentLoadingState());
       try {
         final comments = await sectionRepository.fetchAllComment(event.taskId);
         // debugger();
-        emit(ConcreteCommentSuccessState(comments));
+        emit(ConcreteGetCommentSuccessState(comments));
       } catch (error, stacktrace) {
         log(stacktrace.toString());
-        emit(CommentErrorState(error.toString()));
+        emit(GetCommentErrorState(error.toString()));
       }
     });
   }
