@@ -87,7 +87,6 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
               .add(FetchAllSectionsEvent());
           showToast("Task successfully updated.");
           navKey.currentState?.context.pop();
-          navKey.currentState?.context.pop();
           emit(ConcreteTaskSuccessState());
         }
       } on Exception catch (error) {

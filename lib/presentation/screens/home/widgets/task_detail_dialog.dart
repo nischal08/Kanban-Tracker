@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,12 +21,14 @@ import 'package:kanban/presentation/widgets/general_elevated_button.dart';
 import 'package:kanban/presentation/widgets/general_text_button.dart';
 
 class TaskDetailDialog extends StatefulWidget {
-  final TaskModel task;
+  final String sectionId;
+  final String itemContent;
   final String taskStatus;
   const TaskDetailDialog({
     super.key,
-    required this.task,
+    required this.sectionId,
     required this.taskStatus,
+    required this.itemContent,
   });
 
   @override
@@ -90,7 +93,36 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(8.r),
             ),
-            child: bodyContent(context),
+            child: BlocBuilder<SectionTaskBloc, SectionState>(
+              builder: (_, state) {
+                debugger();
+                switch (state) {
+                  case SectionLoadingState _:
+                    return SizedBox(
+                      height: 200.h,
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  case SectionErrorState _:
+                    return SizedBox(
+                      height: 200.h,
+                      child: Center(
+                        child: Text(state.error.toString()),
+                      ),
+                    );
+                  case ConcreteSectionsSuccessState _:
+                    late TaskModel task;
+                    task = state.tasks[widget.sectionId]!.firstWhere((element) {
+                      return widget.itemContent.contains(element.id);
+                    });
+                    return bodyContent(context, task);
+                  case SectionInitialState _:
+                  default:
+                    return const SizedBox.shrink();
+                }
+              },
+            ),
           ),
           Positioned(
             top: 2.h,
@@ -110,12 +142,12 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
     );
   }
 
-  Column bodyContent(BuildContext context) {
+  Column bodyContent(BuildContext context, TaskModel task) {
     String createdDate =
-        "${DateFormat().add_MMMEd().format(widget.task.createdAt)}, ${DateFormat().addPattern("hh:mm a").format(widget.task.createdAt)}";
-    String dueDate = widget.task.due?.datetime == null
+        "${DateFormat().add_MMMEd().format(task.createdAt)}, ${DateFormat().addPattern("hh:mm a").format(task.createdAt)}";
+    String dueDate = task.due?.datetime == null
         ? "N/A"
-        : "${DateFormat().add_MMMEd().format(widget.task.due!.datetime!)}, ${DateFormat().addPattern("hh:mm a").format(widget.task.due!.datetime!)}";
+        : "${DateFormat().add_MMMEd().format(task.due!.datetime!)}, ${DateFormat().addPattern("hh:mm a").format(task.due!.datetime!)}";
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -137,7 +169,7 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
           ],
         ),
         Text(
-          widget.task.content,
+          task.content,
           style: generalTextStyle(18).copyWith(
             fontWeight: FontWeight.w600,
           ),
@@ -153,18 +185,18 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
                 children: [
                   TaskInfoColumn(
                     title: "Task ID",
-                    subTitle: widget.task.id,
+                    subTitle: task.id,
                   ),
                   gapH(12),
                   TaskInfoColumn(
                     title: "Priority",
-                    subTitle: getPriorityText(widget.task.priority),
+                    subTitle: getPriorityText(task.priority),
                   ),
                   gapH(12),
                   TaskInfoColumn(
                     title: "Time spent",
-                    subTitle: widget.task.duration?.amount != null
-                        ? convertMinutesToDHM(widget.task.duration!.amount)
+                    subTitle: task.duration?.amount != null
+                        ? convertMinutesToDHM(task.duration!.amount)
                         : "N/A",
                   ),
                 ],
@@ -200,8 +232,7 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
         gapH(12),
         TaskInfoColumn(
           title: "Description",
-          subTitle:
-              widget.task.description.isEmpty ? "N/A" : widget.task.description,
+          subTitle: task.description.isEmpty ? "N/A" : task.description,
         ),
         gapH(24),
         Row(
@@ -226,9 +257,7 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
                             })) ??
                         false;
                     if (continueProgram && context.mounted) {
-                      context
-                          .read<DeleteTaskCubit>()
-                          .deleteTask(widget.task.id);
+                      context.read<DeleteTaskCubit>().deleteTask(task.id);
                     }
                   },
                 );
@@ -242,13 +271,13 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
                     isScrollControlled: true,
                     builder: (BuildContext dgContext) {
                       return AddAndEditCardBottomsheet(
-                        groupId: widget.task.sectionId,
-                        task: widget.task,
+                        groupId: task.sectionId,
+                        task: task,
                         onCreate: () {
                           context
                               .read<SectionTaskBloc>()
                               .boardController
-                              .scrollToBottom(widget.task.sectionId);
+                              .scrollToBottom(task.sectionId);
                         },
                       );
                     });
@@ -293,7 +322,7 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
                   loading: state is TaskLoadingState,
                   borderRadius: 4.r,
                   onPressed: () {
-                    context.read<MoveTaskCubit>().movetask(widget.task);
+                    context.read<MoveTaskCubit>().movetask(task);
                   },
                 );
               },

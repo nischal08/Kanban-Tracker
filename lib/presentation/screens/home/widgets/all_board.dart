@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:appflowy_board/appflowy_board.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +7,6 @@ import 'package:kanban/core/styles/app_sizes.dart';
 import 'package:kanban/core/styles/text_styles.dart';
 import 'package:kanban/core/utils/priority_util.dart';
 import 'package:kanban/presentation/bloc/section/section_task_bloc.dart';
-import 'package:kanban/presentation/models/task_model.dart';
 import 'package:kanban/presentation/screens/home/entity/text_item.dart';
 import 'package:kanban/presentation/screens/home/widgets/add_and_edit_card_bottomsheet.dart';
 import 'package:kanban/presentation/screens/home/widgets/task_detail_dialog.dart';
@@ -143,17 +141,12 @@ class _AllBoardState extends State<AllBoard> {
 
     return GestureDetector(
       onTap: () async {
-        SectionTaskBloc sectionBloc = BlocProvider.of<SectionTaskBloc>(context);
-        TaskModel taskData = (sectionBloc.state as SectionSuccessState)
-            .tasks[group.headerData.groupId]!
-            .firstWhere((element) {
-          return item.id.contains(element.id);
-        });
         await showDialog(
             context: context,
             builder: (BuildContext dgContext) {
               return TaskDetailDialog(
-                task: taskData,
+                itemContent: item.id,
+                sectionId: group.headerData.groupId,
                 taskStatus: group.headerData.groupName,
               );
             });
