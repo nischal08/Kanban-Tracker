@@ -160,7 +160,8 @@ class _AllBoardState extends State<AllBoard> {
               );
             });
       },
-      child: Padding(
+      child: Container(
+        color: Colors.transparent,
         padding: EdgeInsets.symmetric(
           horizontal: 4.w,
           vertical: 4.h,

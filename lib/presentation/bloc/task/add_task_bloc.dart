@@ -1,15 +1,11 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kanban/core/utils/show_toast.dart';
 import 'package:kanban/core/values/routes_config.dart';
 import 'package:kanban/presentation/bloc/section/section_task_bloc.dart';
-import 'package:kanban/presentation/models/task_model.dart';
 import 'package:kanban/presentation/repositories/task.dart';
-import 'package:kanban/presentation/screens/home/entity/text_item.dart';
-
 part 'task_state.dart';
 
 class AddTaskBloc extends Bloc<TaskEvent, TaskState> {
@@ -54,15 +50,6 @@ class AddTaskBloc extends Bloc<TaskEvent, TaskState> {
         };
         log(body.toString());
         await taskRepository.addTask(body);
-        // TaskModel task = await taskRepository.addTask(body);
-        // String title = "${task.content}!@#${task.id}!@#${task.commentCount}!@#${task.priority}";
-        // navKey.currentState?.context
-        //     .read<SectionTaskBloc>()
-        //     .controller
-        //     .addGroupItem(
-        //       event.sectionId,
-        //       RichTextItem(title: title, subtitle: descriptionTEC.text),
-        //     );
         navKey.currentState?.context
             .read<SectionTaskBloc>()
             .add(FetchAllSectionsEvent());

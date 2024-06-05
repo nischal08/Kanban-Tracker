@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,10 +8,14 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:kanban/core/styles/styles.dart';
 import 'package:kanban/core/utils/priority_util.dart';
+import 'package:kanban/core/utils/time_util.dart';
+import 'package:kanban/presentation/bloc/section/section_task_bloc.dart';
 import 'package:kanban/presentation/bloc/task/add_task_bloc.dart';
+import 'package:kanban/presentation/bloc/task/delete_task.dart';
 import 'package:kanban/presentation/bloc/task/move_task_cubit.dart';
 import 'package:kanban/presentation/models/task_model.dart';
 import 'package:kanban/presentation/screens/home/widgets/task_info_column.dart';
+import 'package:kanban/presentation/widgets/confirmation_dialog.dart';
 import 'package:kanban/presentation/widgets/general_elevated_button.dart';
 import 'package:kanban/presentation/widgets/general_text_button.dart';
 
@@ -139,7 +144,7 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
         ),
         gapH(24),
         Row(
-          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Flexible(
               fit: FlexFit.loose,
@@ -154,6 +159,13 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
                   TaskInfoColumn(
                     title: "Priority",
                     subTitle: getPriorityText(widget.task.priority),
+                  ),
+                  gapH(12),
+                  TaskInfoColumn(
+                    title: "Time spent",
+                    subTitle: widget.task.duration?.amount != null
+                        ? convertMinutesToDHM(widget.task.duration!.amount)
+                        : "N/A",
                   ),
                 ],
               ),
@@ -175,31 +187,53 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
                     subTitle: createdDate,
                     iconData: Icons.schedule,
                   ),
+                  gapH(12),
+                  TaskInfoColumn(
+                    title: "Description",
+                    subTitle: widget.task.description.isEmpty
+                        ? "N/A"
+                        : widget.task.description,
+                  ),
                 ],
               ),
             ),
           ],
         ),
-        gapH(16),
-        TaskInfoColumn(
-          title: "Time spent(min)",
-          subTitle: widget.task.duration?.amount ?? "N/A",
-        ),
-        gapH(16),
-        TaskInfoColumn(
-          title: "Description",
-          subTitle:
-              widget.task.description.isEmpty ? "N/A" : widget.task.description,
-        ),
-        gapH(24),
-        TaskInfoColumn(
-          title: "Timer",
-          subTitle: elapsedTime,
-        ),
         gapH(24),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            BlocBuilder<DeleteTaskCubit, TaskState>(
+              builder: (_, state) {
+                return GeneralElevatedButton(
+                  marginH: 0,
+                  height: 32.h,
+                  isMinimumWidth: true,
+                  isSmallText: true,
+                  title: "Delete",
+                  loading: state is TaskLoadingState,
+                  borderRadius: 4.r,
+                  bgColor: Theme.of(context).colorScheme.error,
+                  onPressed: () async {
+                    bool continueProgram = (await showDialog(
+                            context: context,
+                            barrierColor: Colors.black.withOpacity(0.8),
+                            builder: (BuildContext dgContext) {
+                              return const ConfirmationDialog(
+                                title: "Do you sure want to delete the task?",
+                              );
+                            })) ??
+                        false;
+                    if (continueProgram && context.mounted) {
+                      context
+                          .read<DeleteTaskCubit>()
+                          .deleteTask(widget.task.id);
+                    }
+                  },
+                );
+              },
+            ),
+            const Spacer(),
             GeneralTextButton(
               height: 32.h,
               title: isStarted ? "Stop" : "Start",
@@ -228,7 +262,7 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
                   loading: state is TaskLoadingState,
                   borderRadius: 4.r,
                   onPressed: () {
-                      context.read<MoveTaskCubit>().movetask(widget.task);
+                    context.read<MoveTaskCubit>().movetask(widget.task);
                   },
                 );
               },
