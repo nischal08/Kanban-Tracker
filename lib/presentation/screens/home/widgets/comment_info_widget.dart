@@ -23,7 +23,9 @@ class CommentInfoWidget extends StatelessWidget {
           postedAt,
           textAlign: TextAlign.end,
           style: generalTextStyle(11).copyWith(
-              fontWeight: FontWeight.w500, color: Colors.grey.shade600),
+            fontWeight: FontWeight.w500,
+            color: Colors.grey.shade600,
+          ),
         ),
       ],
     );

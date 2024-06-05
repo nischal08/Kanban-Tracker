@@ -1,6 +1,5 @@
 class ImageConstants {
-  static const String baseImageAsset = "assets/image";
-  static const String baseIconAsset = "assets/icons";
-  static const String noInternet = "$baseImageAsset/no_internet.png";
-  static const String loginImage = "$baseImageAsset/pana.png";
+  static const String baseImageAsset = "lib/core/assets/images";
+  static const String baseIconAsset = "lib/core/assets/icons";
+  static const String logoImage = "$baseImageAsset/logo.jpg";
 }

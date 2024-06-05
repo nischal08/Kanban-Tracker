@@ -1,29 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kanban/core/styles/text_styles.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:kanban/core/styles/app_colors.dart';
+import 'package:kanban/core/values/constants/image_constants.dart';
 
-class SplashScreen extends ConsumerStatefulWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  ConsumerState<SplashScreen> createState() => _SplashScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends ConsumerState<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
+class _SplashScreenState extends State<SplashScreen> {
   TextEditingController textEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.primaryColor,
       body: Center(
-        child: Text(
-          "Splash Screen",
-          style: generalTextStyle(22).copyWith(
-            fontWeight: FontWeight.w500,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(100.r),
+          child: Image.asset(
+            ImageConstants.logoImage,
+            height: 120.h,
+            width: 120.h,
           ),
         ),
       ),
