@@ -6,21 +6,22 @@ class AddTaskEvent extends TaskEvent {
   final String sectionId;
   AddTaskEvent(this.sectionId);
 }
+
 // states.dart
 abstract class TaskState {}
 
-class AddTaskInitialState extends TaskState {}
+class TaskInitialState extends TaskState {}
 
-class AddTaskLoadingState extends TaskState {}
+class TaskLoadingState extends TaskState {}
 
-abstract class AddTaskSuccessState extends TaskState {}
+abstract class TaskSuccessState extends TaskState {}
 
-class ConcreteAddTaskSuccessState implements AddTaskSuccessState {
-  ConcreteAddTaskSuccessState();
+class ConcreteTaskSuccessState implements TaskSuccessState {
+  ConcreteTaskSuccessState();
 }
 
-class AddTaskErrorState extends TaskState {
+class TaskErrorState extends TaskState {
   final String error;
 
-  AddTaskErrorState(this.error);
+  TaskErrorState(this.error);
 }

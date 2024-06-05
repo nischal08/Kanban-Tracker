@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kanban/core/styles/app_sizes.dart';
 import 'package:kanban/core/styles/text_styles.dart';
+import 'package:kanban/core/utils/priority_util.dart';
 import 'package:kanban/presentation/bloc/section/section_task_bloc.dart';
 import 'package:kanban/presentation/models/task_model.dart';
 import 'package:kanban/presentation/screens/home/entity/text_item.dart';
@@ -134,20 +135,7 @@ class _AllBoardState extends State<AllBoard> {
     String taskId = '';
     Color priorityColor = Colors.green;
 
-    getPriorityColors(int value) {
-      switch (value) {
-        case 1:
-          return Colors.green;
-        case 2:
-          return Colors.yellow;
-        case 3:
-          return Colors.orange;
-        case 4:
-          return Colors.red;
-        default:
-          return Colors.green;
-      }
-    }
+  
 
     List dataList = item is RichTextItem
         ? item.title.split('!@#')
@@ -158,7 +146,7 @@ class _AllBoardState extends State<AllBoard> {
       title = dataList[0];
       taskId = dataList[1];
       commentCount = dataList[2];
-      priorityColor = getPriorityColors(int.tryParse(dataList[3]) ?? 1);
+      priorityColor = getPriorityColor(int.tryParse(dataList[3]) ?? 1);
     }
 
     return GestureDetector(

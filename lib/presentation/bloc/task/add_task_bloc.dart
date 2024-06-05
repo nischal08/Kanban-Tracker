@@ -1,11 +1,15 @@
 import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kanban/core/utils/show_toast.dart';
 import 'package:kanban/core/values/routes_config.dart';
 import 'package:kanban/presentation/bloc/section/section_task_bloc.dart';
+import 'package:kanban/presentation/models/task_model.dart';
 import 'package:kanban/presentation/repositories/task.dart';
+import 'package:kanban/presentation/screens/home/entity/text_item.dart';
+
 part 'task_state.dart';
 
 class AddTaskBloc extends Bloc<TaskEvent, TaskState> {
@@ -33,13 +37,13 @@ class AddTaskBloc extends Bloc<TaskEvent, TaskState> {
     }
   }
 
-  AddTaskBloc(this.taskRepository) : super(AddTaskInitialState()) {
+  AddTaskBloc(this.taskRepository) : super(TaskInitialState()) {
     on<AddTaskEvent>((event, emit) async {
       if (!formKey.currentState!.validate()) {
         return;
       }
       try {
-        emit(AddTaskLoadingState());
+        emit(TaskLoadingState());
         Map body = {
           "content": descriptionTEC.text,
           "description": titleTEC.text,
@@ -49,6 +53,7 @@ class AddTaskBloc extends Bloc<TaskEvent, TaskState> {
           "due_lang": "en",
         };
         log(body.toString());
+        await taskRepository.addTask(body);
         // TaskModel task = await taskRepository.addTask(body);
         // String title = "${task.content}!@#${task.id}!@#${task.commentCount}!@#${task.priority}";
         // navKey.currentState?.context
@@ -58,15 +63,15 @@ class AddTaskBloc extends Bloc<TaskEvent, TaskState> {
         //       event.sectionId,
         //       RichTextItem(title: title, subtitle: descriptionTEC.text),
         //     );
-         navKey.currentState?.context
+        navKey.currentState?.context
             .read<SectionTaskBloc>()
             .add(FetchAllSectionsEvent());
         showToast("Task successfully added.");
-        emit(ConcreteAddTaskSuccessState());
+        emit(ConcreteTaskSuccessState());
         navKey.currentState?.context.pop();
       } on Exception catch (error) {
         showToast("Error occured while adding task.");
-        emit(AddTaskErrorState(error.toString()));
+        emit(TaskErrorState(error.toString()));
       }
     });
   }

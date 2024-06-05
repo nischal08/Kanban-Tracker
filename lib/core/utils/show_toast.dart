@@ -15,10 +15,10 @@ void showToast(
   bool unFocusKeyboard = true,
 }) async {
   final context = navKey.currentState!.context;
-  if (unFocusKeyboard) {
-    FocusScope.of(context).unfocus();
-    log("Toast Closed the Keyboard");
-  }
+  // if (unFocusKeyboard) {
+  //   FocusScope.of(context).unfocus();
+  //   log("Toast Closed the Keyboard");
+  // }
   if (context.mounted) {
     final toast = Container(
       padding: const EdgeInsets.all(AppSizes.paddingLg / 1.5),

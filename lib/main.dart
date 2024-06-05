@@ -7,6 +7,7 @@ import 'package:kanban/core/styles/themes.dart';
 import 'package:kanban/core/values/routes_config.dart';
 import 'package:kanban/presentation/bloc/section/section_task_bloc.dart';
 import 'package:kanban/presentation/bloc/task/add_task_bloc.dart';
+import 'package:kanban/presentation/bloc/task/move_task_cubit.dart';
 import 'package:kanban/presentation/repositories/get_sections.dart';
 import 'package:kanban/presentation/repositories/task.dart';
 
@@ -35,6 +36,9 @@ class MyApp extends StatelessWidget {
             ),
             BlocProvider<AddTaskBloc>(
               create: (context) => AddTaskBloc(TasksRepositoryImpl()),
+            ),
+            BlocProvider<MoveTaskCubit>(
+              create: (context) => MoveTaskCubit(TasksRepositoryImpl()),
             ),
           ],
           child: MaterialApp.router(

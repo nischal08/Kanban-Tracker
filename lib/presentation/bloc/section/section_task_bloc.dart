@@ -21,7 +21,7 @@ class SectionTaskBloc extends Bloc<SectionEvent, SectionState> {
   late AppFlowyGroupData group3;
 
   late final AppFlowyBoardController controller;
-  late final Map<String, List<TaskModel>> tasksMap;
+  late Map<String, List<TaskModel>> tasksMap;
   List<AppFlowyGroupData> allGroupData = [];
   SectionTaskBloc(this.sectionRepository, this.taskRepository)
       : super(SectionInitialState()) {
@@ -43,14 +43,17 @@ class SectionTaskBloc extends Bloc<SectionEvent, SectionState> {
       },
     );
     on<FetchAllSectionsEvent>((event, emit) async {
+      tasksMap = {};
+      allGroupData.clear();
+      controller.clear();
       emit(SectionLoadingState());
       try {
-        tasksMap = {};
         final sections = await sectionRepository.call();
         for (Section section in sections) {
           if (section.id.isNotEmpty) {
             tasksMap[section.id] =
                 await taskRepository.fetchAllTask(section.id);
+
             allGroupData.add(
               AppFlowyGroupData(
                 id: section.id,
@@ -70,6 +73,7 @@ class SectionTaskBloc extends Bloc<SectionEvent, SectionState> {
               ),
             );
             controller.addGroup(allGroupData[sections.indexOf(section)]);
+            // debugger();
           }
         }
         emit(ConcreteSectionsSuccessState(sections, tasksMap));

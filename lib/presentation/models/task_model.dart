@@ -26,7 +26,7 @@ class TaskModel {
   final DateTime createdAt;
   final Due? due;
   final String url;
-  final dynamic duration;
+  final TaskDuration? duration;
 
   TaskModel({
     required this.id,
@@ -67,7 +67,7 @@ class TaskModel {
     DateTime? createdAt,
     Due? due,
     String? url,
-    dynamic duration,
+    TaskDuration? duration,
   }) =>
       TaskModel(
         id: id ?? this.id,
@@ -108,7 +108,9 @@ class TaskModel {
         createdAt: DateTime.parse(json["created_at"]),
         due: json["due"] == null ? null : Due.fromJson(json["due"]),
         url: json["url"],
-        duration: json["duration"],
+        duration: json["duration"] == null
+            ? null
+            : TaskDuration.fromJson(json["duration"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -164,7 +166,7 @@ class Due {
       );
 
   factory Due.fromJson(Map<String, dynamic> json) => Due(
-        date: json["date"],
+        date: json["date"] ?? "",
         string: json["string"],
         lang: json["lang"],
         isRecurring: json["is_recurring"] ?? false,
@@ -178,5 +180,34 @@ class Due {
         "lang": lang,
         "is_recurring": isRecurring,
         "datetime": datetime!.toIso8601String(),
+      };
+}
+
+class TaskDuration {
+  final String amount;
+  final String unit;
+
+  TaskDuration({
+    required this.amount,
+    required this.unit,
+  });
+
+  TaskDuration copyWith({
+    String? amount,
+    String? unit,
+  }) =>
+      TaskDuration(
+        amount: amount ?? this.amount,
+        unit: unit ?? this.unit,
+      );
+
+  factory TaskDuration.fromJson(Map<String, dynamic> json) => TaskDuration(
+        amount: json["amount"] == null ? "" : json["amount"].toString(),
+        unit: json["unit"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "amount": amount,
+        "unit": unit,
       };
 }

@@ -198,7 +198,7 @@ class _AddCardBottomsheetContentState extends State<AddCardBottomsheetContent> {
                     isMinimumWidth: true,
                     isSmallText: true,
                     title: "Create",
-                    loading: state is AddTaskLoadingState,
+                    loading: state is TaskLoadingState,
                     borderRadius: 4.r,
                     onPressed: () {
                       context.read<AddTaskBloc>().add(
