@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kanban/core/values/routes_config.dart';
 import 'package:kanban/presentation/bloc/section/section_task_bloc.dart';
-import 'package:kanban/presentation/bloc/task/add_task_bloc.dart';
+import 'package:kanban/presentation/bloc/task/task_bloc.dart';
 import 'package:kanban/presentation/repositories/task.dart';
 
 class DeleteTaskCubit extends Cubit<TaskState> {
@@ -13,7 +13,7 @@ class DeleteTaskCubit extends Cubit<TaskState> {
     try {
       emit(TaskLoadingState());
       await taskRepository.deleteTask(id);
-      if (navKey.currentState!.context.mounted) {
+      if (navKey.currentState!.mounted) {
         navKey.currentState!.context
             .read<SectionTaskBloc>()
             .add(FetchAllSectionsEvent());

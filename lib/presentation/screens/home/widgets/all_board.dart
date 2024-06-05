@@ -10,7 +10,7 @@ import 'package:kanban/core/utils/priority_util.dart';
 import 'package:kanban/presentation/bloc/section/section_task_bloc.dart';
 import 'package:kanban/presentation/models/task_model.dart';
 import 'package:kanban/presentation/screens/home/entity/text_item.dart';
-import 'package:kanban/presentation/screens/home/widgets/add_card_bottomsheet_content.dart';
+import 'package:kanban/presentation/screens/home/widgets/add_and_edit_card_bottomsheet.dart';
 import 'package:kanban/presentation/screens/home/widgets/task_detail_dialog.dart';
 
 class AllBoard extends StatefulWidget {
@@ -75,7 +75,7 @@ class _AllBoardState extends State<AllBoard> {
                     useSafeArea: true,
                     isScrollControlled: true,
                     builder: (BuildContext dgContext) {
-                      return AddCardBottomsheetContent(
+                      return AddAndEditCardBottomsheet(
                         groupId: columnData.headerData.groupId,
                         onCreate: () {
                           context
@@ -96,7 +96,7 @@ class _AllBoardState extends State<AllBoard> {
           headerBuilder: (context, columnData) {
             return Column(
               children: [
-              gapH(8),
+                gapH(8),
                 AppFlowyGroupHeader(
                   icon: const Icon(Icons.lightbulb_circle),
                   title: Expanded(
@@ -107,7 +107,7 @@ class _AllBoardState extends State<AllBoard> {
                   ),
                   margin: config.groupBodyPadding,
                 ),
-              gapH(4),
+                gapH(4),
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: 12.w),
                   height: 0.5,
@@ -123,19 +123,11 @@ class _AllBoardState extends State<AllBoard> {
   }
 
   Widget _buildCard(AppFlowyGroupData group, AppFlowyGroupItem item) {
-    SectionTaskBloc sectionBloc = BlocProvider.of<SectionTaskBloc>(context);
-    TaskModel taskData = (sectionBloc.state as SectionSuccessState)
-        .tasks[group.headerData.groupId]!
-        .firstWhere((element) {
-      return item.id.contains(element.id);
-    });
     String commentCount = '';
     String title = '';
     String description = item is RichTextItem ? item.subtitle : '';
     String taskId = '';
     Color priorityColor = Colors.green;
-
-  
 
     List dataList = item is RichTextItem
         ? item.title.split('!@#')
@@ -151,6 +143,12 @@ class _AllBoardState extends State<AllBoard> {
 
     return GestureDetector(
       onTap: () async {
+        SectionTaskBloc sectionBloc = BlocProvider.of<SectionTaskBloc>(context);
+        TaskModel taskData = (sectionBloc.state as SectionSuccessState)
+            .tasks[group.headerData.groupId]!
+            .firstWhere((element) {
+          return item.id.contains(element.id);
+        });
         await showDialog(
             context: context,
             builder: (BuildContext dgContext) {
@@ -200,11 +198,11 @@ class _AllBoardState extends State<AllBoard> {
                       ),
                       gapH(4),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
                             "ID $taskId",
                           ),
+                          const Spacer(),
                           Row(
                             children: [
                               Icon(
@@ -216,11 +214,11 @@ class _AllBoardState extends State<AllBoard> {
                               Text(
                                 commentCount,
                               ),
-                              gapW(4),
                             ],
-                          )
+                          ),
+                          gapW(4),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),

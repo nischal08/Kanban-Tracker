@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,10 +8,12 @@ import 'package:intl/intl.dart';
 import 'package:kanban/core/styles/styles.dart';
 import 'package:kanban/core/utils/priority_util.dart';
 import 'package:kanban/core/utils/time_util.dart';
-import 'package:kanban/presentation/bloc/task/add_task_bloc.dart';
+import 'package:kanban/presentation/bloc/section/section_task_bloc.dart';
 import 'package:kanban/presentation/bloc/task/delete_task.dart';
 import 'package:kanban/presentation/bloc/task/move_task_cubit.dart';
+import 'package:kanban/presentation/bloc/task/task_bloc.dart';
 import 'package:kanban/presentation/models/task_model.dart';
+import 'package:kanban/presentation/screens/home/widgets/add_and_edit_card_bottomsheet.dart';
 import 'package:kanban/presentation/screens/home/widgets/task_info_column.dart';
 import 'package:kanban/presentation/widgets/confirmation_dialog.dart';
 import 'package:kanban/presentation/widgets/general_elevated_button.dart';
@@ -186,15 +189,19 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
                   ),
                   gapH(12),
                   TaskInfoColumn(
-                    title: "Description",
-                    subTitle: widget.task.description.isEmpty
-                        ? "N/A"
-                        : widget.task.description,
+                    title: "Timer",
+                    subTitle: elapsedTime,
                   ),
                 ],
               ),
             ),
           ],
+        ),
+        gapH(12),
+        TaskInfoColumn(
+          title: "Description",
+          subTitle:
+              widget.task.description.isEmpty ? "N/A" : widget.task.description,
         ),
         gapH(24),
         Row(
@@ -202,15 +209,12 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
           children: [
             BlocBuilder<DeleteTaskCubit, TaskState>(
               builder: (_, state) {
-                return GeneralElevatedButton(
-                  marginH: 0,
-                  height: 32.h,
-                  isMinimumWidth: true,
-                  isSmallText: true,
-                  title: "Delete",
-                  loading: state is TaskLoadingState,
-                  borderRadius: 4.r,
-                  bgColor: Theme.of(context).colorScheme.error,
+                return IconButton(
+                  icon: Icon(
+                    Icons.delete,
+                    size: 21.h,
+                    color: Theme.of(context).colorScheme.error,
+                  ),
                   onPressed: () async {
                     bool continueProgram = (await showDialog(
                             context: context,
@@ -229,6 +233,36 @@ class _TaskDetailDialogState extends State<TaskDetailDialog> {
                   },
                 );
               },
+            ),
+            IconButton(
+              onPressed: () async {
+                bool? isSuccess = await showModalBottomSheet(
+                    context: context,
+                    useSafeArea: true,
+                    isScrollControlled: true,
+                    builder: (BuildContext dgContext) {
+                      return AddAndEditCardBottomsheet(
+                        groupId: widget.task.sectionId,
+                        task: widget.task,
+                        onCreate: () {
+                          context
+                              .read<SectionTaskBloc>()
+                              .boardController
+                              .scrollToBottom(widget.task.sectionId);
+                        },
+                      );
+                    });
+
+                if (isSuccess != null) {
+                  if (isSuccess && context.mounted) {
+                    context.pop();
+                  }
+                }
+              },
+              icon: Icon(
+                Icons.edit_note,
+                size: 24.h,
+              ),
             ),
             const Spacer(),
             GeneralTextButton(

@@ -1,10 +1,16 @@
-part of 'add_task_bloc.dart';
+part of 'task_bloc.dart';
 
 abstract class TaskEvent {}
 
 class AddTaskEvent extends TaskEvent {
   final String sectionId;
   AddTaskEvent(this.sectionId);
+}
+
+class UpdateTaskEvent extends TaskEvent {
+  final String sectionId;
+  final String taskId;
+  UpdateTaskEvent({required this.sectionId, required this.taskId});
 }
 
 // states.dart

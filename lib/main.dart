@@ -6,9 +6,9 @@ import 'package:kanban/core/dio/dio_dependency_injection.dart';
 import 'package:kanban/core/styles/themes.dart';
 import 'package:kanban/core/values/routes_config.dart';
 import 'package:kanban/presentation/bloc/section/section_task_bloc.dart';
-import 'package:kanban/presentation/bloc/task/add_task_bloc.dart';
 import 'package:kanban/presentation/bloc/task/delete_task.dart';
 import 'package:kanban/presentation/bloc/task/move_task_cubit.dart';
+import 'package:kanban/presentation/bloc/task/task_bloc.dart';
 import 'package:kanban/presentation/repositories/get_sections.dart';
 import 'package:kanban/presentation/repositories/task.dart';
 
@@ -35,8 +35,8 @@ class MyApp extends StatelessWidget {
               create: (context) => SectionTaskBloc(
                   GetAllSectionsRepository(), TasksRepositoryImpl()),
             ),
-            BlocProvider<AddTaskBloc>(
-              create: (context) => AddTaskBloc(TasksRepositoryImpl()),
+            BlocProvider<TaskBloc>(
+              create: (context) => TaskBloc(TasksRepositoryImpl()),
             ),
             BlocProvider<MoveTaskCubit>(
               create: (context) => MoveTaskCubit(TasksRepositoryImpl()),

@@ -4,7 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:kanban/core/styles/app_sizes.dart';
-import 'package:kanban/presentation/bloc/task/add_task_bloc.dart';
+import 'package:kanban/core/utils/priority_util.dart';
+import 'package:kanban/presentation/bloc/task/task_bloc.dart';
+import 'package:kanban/presentation/models/task_model.dart';
 import 'package:kanban/presentation/protocols/is_empty_validation.dart';
 import 'package:kanban/presentation/screens/home/widgets/custom_text.dart';
 import 'package:kanban/presentation/widgets/general_dropdown.dart';
@@ -12,30 +14,44 @@ import 'package:kanban/presentation/widgets/general_elevated_button.dart';
 import 'package:kanban/presentation/widgets/general_text_button.dart';
 import 'package:kanban/presentation/widgets/general_textfield.dart';
 
-class AddCardBottomsheetContent extends StatefulWidget {
+class AddAndEditCardBottomsheet extends StatefulWidget {
   final VoidCallback onCreate;
   final String groupId;
-  const AddCardBottomsheetContent({
+  final TaskModel? task;
+  const AddAndEditCardBottomsheet({
     super.key,
     required this.onCreate,
     required this.groupId,
+    this.task,
   });
 
   @override
-  State<AddCardBottomsheetContent> createState() =>
-      _AddCardBottomsheetContentState();
+  State<AddAndEditCardBottomsheet> createState() =>
+      _AddAndEditCardBottomsheetState();
 }
 
-class _AddCardBottomsheetContentState extends State<AddCardBottomsheetContent> {
+class _AddAndEditCardBottomsheetState extends State<AddAndEditCardBottomsheet> {
   DateTime lastDate = DateTime.now().add(const Duration(days: 365 * 18));
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
-  late final AddTaskBloc addTaskBloc;
+  late final TaskBloc addTaskBloc;
 
   @override
   void initState() {
     super.initState();
-    addTaskBloc = context.read<AddTaskBloc>();
+    addTaskBloc = context.read<TaskBloc>();
+    addTaskBloc.priorityTEC.text = "Normal";
+    if (widget.task != null) {
+      addTaskBloc.titleTEC.text = widget.task!.content;
+      addTaskBloc.descriptionTEC.text = widget.task!.description;
+      addTaskBloc.priorityTEC.text = getPriorityText(widget.task!.priority);
+      addTaskBloc.dueDateTEC.text = widget.task?.due?.date != null
+          ? DateFormat("dd-MM-yyyy").format(widget.task!.due!.datetime!)
+          : "";
+      addTaskBloc.dueTimeTEC.text = widget.task?.due?.date != null
+          ? DateFormat("hh:mm a").format(widget.task!.due!.datetime!)
+          : "";
+    }
   }
 
   @override
@@ -85,13 +101,13 @@ class _AddCardBottomsheetContentState extends State<AddCardBottomsheetContent> {
   SingleChildScrollView bodyContent(BuildContext context) {
     return SingleChildScrollView(
       child: Form(
-        key: context.watch<AddTaskBloc>().formKey,
+        key: context.watch<TaskBloc>().formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            const CustomText(
-              text: "Create a task",
+            CustomText(
+              text: "${widget.task != null ? "Update" : "Create"} a task",
               isTitle: true,
             ),
             gapH(20),
@@ -119,7 +135,7 @@ class _AddCardBottomsheetContentState extends State<AddCardBottomsheetContent> {
                 "High",
                 "Urgent",
               ],
-              // initialValue: "Normal",
+              initialValue: addTaskBloc.priorityTEC.text,
             ),
             gapH(16),
             Row(
@@ -191,20 +207,27 @@ class _AddCardBottomsheetContentState extends State<AddCardBottomsheetContent> {
                   },
                 ),
                 gapW(8),
-                BlocBuilder<AddTaskBloc, TaskState>(builder: (_, state) {
+                BlocBuilder<TaskBloc, TaskState>(builder: (_, state) {
                   return GeneralElevatedButton(
                     marginH: 0,
                     height: 32.h,
                     isMinimumWidth: true,
                     isSmallText: true,
-                    title: "Create",
+                    title: widget.task != null ? "Update" : "Create",
                     loading: state is TaskLoadingState,
                     borderRadius: 4.r,
                     onPressed: () {
-                      context.read<AddTaskBloc>().add(
-                            AddTaskEvent(widget.groupId),
-                          );
-                      // widget.onCreate();
+                      if (widget.task != null) {
+                        context.read<TaskBloc>().add(
+                              UpdateTaskEvent(
+                                  sectionId: widget.groupId,
+                                  taskId: widget.task!.id),
+                            );
+                      } else {
+                        context.read<TaskBloc>().add(
+                              AddTaskEvent(widget.groupId),
+                            );
+                      }
                     },
                   );
                 }),

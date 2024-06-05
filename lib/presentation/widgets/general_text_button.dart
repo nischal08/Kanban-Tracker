@@ -72,8 +72,13 @@ class GeneralTextButton extends StatelessWidget {
         ),
         onPressed: (isDisabled || loading) ? null : onPressed,
         child: loading
-            ? const CircularProgressIndicator(
-                color: AppColors.primaryColor,
+            ? SizedBox(
+                height: 17.h,
+                width: 17.h,
+                child: const CircularProgressIndicator(
+                  color: AppColors.primaryColor,
+                  strokeWidth: 3,
+                ),
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,

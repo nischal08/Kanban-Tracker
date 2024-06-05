@@ -81,8 +81,13 @@ class GeneralElevatedButton extends StatelessWidget {
         ),
         onPressed: (isDisabled || loading) ? null : onPressed,
         child: loading
-            ? const CircularProgressIndicator(
-                color: Colors.white,
+            ? SizedBox(
+                height: 17.h,
+                width: 17.h,
+                child: const CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 3,
+                ),
               )
             : leadingAndTrailingWidget ??
                 Text(
