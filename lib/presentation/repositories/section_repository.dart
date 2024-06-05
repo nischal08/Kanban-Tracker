@@ -7,7 +7,7 @@ abstract class SectionRepository {
   Future<List<Section>> call();
 }
 
-class GetAllSectionsRepository implements SectionRepository {
+class SectionRepositoryImpl implements SectionRepository {
   @override
   Future<List<Section>> call() async {
     try {

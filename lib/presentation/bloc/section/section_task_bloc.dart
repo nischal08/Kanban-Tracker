@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/presentation/models/section_model.dart';
 import 'package:kanban/presentation/models/task_model.dart';
-import 'package:kanban/presentation/repositories/get_sections.dart';
-import 'package:kanban/presentation/repositories/task.dart';
+import 'package:kanban/presentation/repositories/section_repository.dart';
+import 'package:kanban/presentation/repositories/task_repository.dart';
 import 'package:kanban/presentation/screens/home/entity/text_item.dart';
 
 part 'section_state.dart';

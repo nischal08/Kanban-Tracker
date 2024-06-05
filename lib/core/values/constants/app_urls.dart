@@ -6,4 +6,6 @@ class AppUrls {
   static const String addTaskUrl = "$baseUrl/tasks";
   static const String updateAndDeleteTaskUrl = "$baseUrl/tasks/[id]";
   static const String closeTaskUrl = "$baseUrl/tasks/[id]/close";
+  static const String getTaskCommentUrl = "$baseUrl/comments?task_id=[id]";
+  static const String addTaskCommentUrl = "$baseUrl/comments";
 }

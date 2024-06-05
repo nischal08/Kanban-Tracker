@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:kanban/core/utils/show_toast.dart';
 import 'package:kanban/core/values/routes_config.dart';
 import 'package:kanban/presentation/bloc/section/section_task_bloc.dart';
-import 'package:kanban/presentation/repositories/task.dart';
+import 'package:kanban/presentation/repositories/task_repository.dart';
 
 part 'task_state.dart';
 
