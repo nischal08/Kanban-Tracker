@@ -45,10 +45,10 @@ class _AddAndEditCardBottomsheetState extends State<AddAndEditCardBottomsheet> {
       addTaskBloc.titleTEC.text = widget.task!.content;
       addTaskBloc.descriptionTEC.text = widget.task!.description;
       addTaskBloc.priorityTEC.text = getPriorityText(widget.task!.priority);
-      addTaskBloc.dueDateTEC.text = widget.task?.due?.date != null
+      addTaskBloc.dueDateTEC.text = widget.task?.due?.datetime != null
           ? DateFormat("dd-MM-yyyy").format(widget.task!.due!.datetime!)
           : "";
-      addTaskBloc.dueTimeTEC.text = widget.task?.due?.date != null
+      addTaskBloc.dueTimeTEC.text = widget.task?.due?.datetime != null
           ? DateFormat("hh:mm a").format(widget.task!.due!.datetime!)
           : "";
     }
